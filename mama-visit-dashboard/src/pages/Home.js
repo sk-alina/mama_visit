@@ -441,10 +441,10 @@ function Home() {
                   📱 Телефоны:
                 </Typography>
                 <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Дочка:</strong> 510-417-6856
+                  <strong>Дочка кукунечка:</strong> 510-417-6856
                 </Typography>
                 <Typography variant="body1">
-                  <strong>Aspen:</strong> 413-205-7451
+                  <strong>Аспен:</strong> 413-205-7451
                 </Typography>
               </Box>
 

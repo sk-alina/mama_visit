@@ -400,7 +400,7 @@ function Lodging() {
                   <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
                     <HotelIcon />
                   </Avatar>
-                  <Typography variant="h5">Информация о жилье</Typography>
+                  <Typography variant="h5">Где живем мы</Typography>
                 </Box>
                 <IconButton onClick={() => handleEdit('lodging', lodgingInfo)} color="primary">
                   <EditIcon />
@@ -409,14 +409,12 @@ function Lodging() {
 
               <Box sx={{ mb: 3 }}>
                 <Typography variant="h6" sx={{ color: 'secondary.main', mb: 2 }}>
-                  📍 Адрес и основная информация
+                  📍 Адрес
                 </Typography>
                 <Typography variant="body1" sx={{ mb: 1 }}>
                   <strong>Адрес:</strong> {lodgingInfo.address}
                 </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Тип жилья:</strong> {lodgingInfo.type}
-                </Typography>
+                
                 <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
                   <Chip label={lodgingInfo.bedrooms} color="primary" variant="outlined" />
                   <Chip label={lodgingInfo.bathrooms} color="primary" variant="outlined" />

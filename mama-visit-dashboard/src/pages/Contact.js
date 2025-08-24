@@ -78,7 +78,7 @@ function Contact() {
     if (!contactsLoading && contacts.length === 0) {
       const sampleContacts = [
         {
-          name: 'Дочка',
+          name: 'Алина',
           phone: '510-417-6856',
           relation: 'Дочка кукунечка',
           primary: true,

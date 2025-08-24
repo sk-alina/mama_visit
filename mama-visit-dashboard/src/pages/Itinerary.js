@@ -266,10 +266,10 @@ function Itinerary() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
           <Typography variant="h2" sx={{ color: 'primary.main', mb: 1 }}>
-            Расписание поездки 📅
+            План Жизни 📅
           </Typography>
           <Typography variant="h6" sx={{ color: 'text.secondary' }}>
-            12-29 сентября 2025 • Планы и мероприятия
+            12-29 сентября 2025 • Расписание всего самого интересного
           </Typography>
         </Box>
         <Button
@@ -292,30 +292,58 @@ function Itinerary() {
                   <ScheduleIcon />
                 </Avatar>
                 <Typography variant="h5">
-                  События (перетащите для изменения порядка)
+                  События
                 </Typography>
               </Box>
 
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={events.map(e => e.id)}
-                  strategy={verticalListSortingStrategy}
+              {sortedEvents.map((event) => (
+                <Paper
+                  key={event.id}
+                  sx={{
+                    mb: 2,
+                    p: 2,
+                    '&:hover': {
+                      boxShadow: 3,
+                    },
+                  }}
                 >
-                  {events.map((event) => (
-                    <SortableItem
-                      key={event.id}
-                      id={event.id}
-                      item={event}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
-                    />
-                  ))}
-                </SortableContext>
-              </DndContext>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography variant="h6" sx={{ color: 'primary.main' }}>
+                        {event.title}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
+                        {event.description}
+                      </Typography>
+                      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                        <Chip
+                          icon={<EventIcon />}
+                          label={`${dayjs(event.date).format('dddd')}, ${dayjs(event.date).format('DD MMMM YYYY')}`}
+                          size="small"
+                          color="primary"
+                          variant="outlined"
+                        />
+                        <Chip
+                          icon={<ScheduleIcon />}
+                          label={dayjs(event.date).format('HH:mm')}
+                          size="small"
+                          color="secondary"
+                          variant="outlined"
+                        />
+                      </Box>
+                    </Box>
+
+                    <Box>
+                      <IconButton onClick={() => handleEdit(event)} color="primary">
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton onClick={() => handleDelete(event.id)} color="error">
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </Paper>
+              ))}
 
               {events.length === 0 && (
                 <Paper sx={{ p: 4, textAlign: 'center', backgroundColor: 'grey.50' }}>
@@ -339,19 +367,15 @@ function Itinerary() {
               </Typography>
               <List dense>
                 {sortedEvents.map((event, index) => (
-                  <ListItem key={event.id} sx={{ px: 0 }}>
-                    <ListItemText
-                      primary={
-                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                          {event.title}
-                        </Typography>
-                      }
-                      secondary={
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          {dayjs(event.date).format('DD MMM, HH:mm')}
-                        </Typography>
-                      }
-                    />
+                  <ListItem key={event.id} sx={{ px: 0, py: 1 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', minWidth: 'fit-content', mr: 2 }}>
+                        {dayjs(event.date).format('ddd, DD MMM, HH:mm')}
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 500, flex: 1, textAlign: 'right' }}>
+                        {event.title}
+                      </Typography>
+                    </Box>
                   </ListItem>
                 ))}
               </List>
@@ -364,13 +388,13 @@ function Itinerary() {
                 💡 Подсказки
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-                • Перетаскивайте события для изменения порядка
+                • Выберай все самое интересное
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-                • Используйте кнопку редактирования для изменения деталей
+                • Используй кнопку редактирования для изменения деталей
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                • Добавляйте время и дату для каждого события
+                • Добавляй время и дату для каждого события
               </Typography>
             </CardContent>
           </Card>
