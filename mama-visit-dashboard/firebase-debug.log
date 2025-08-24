@@ -1,0 +1,108 @@
+[debug] [2025-08-24T22:51:34.269Z] ----------------------------------------------------------------------
+[debug] [2025-08-24T22:51:34.272Z] Command:       G:\NodeJS\node.exe C:\Users\Alina\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2025-08-24T22:51:34.273Z] CLI Version:   14.14.0
+[debug] [2025-08-24T22:51:34.273Z] Platform:      win32
+[debug] [2025-08-24T22:51:34.273Z] Node Version:  v24.4.1
+[debug] [2025-08-24T22:51:34.273Z] Time:          Sun Aug 24 2025 18:51:34 GMT-0400 (Eastern Daylight Time)
+[debug] [2025-08-24T22:51:34.273Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-08-24T22:51:34.474Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-08-24T22:51:34.474Z] > authorizing via signed-in user (skr1alina@gmail.com)
+[debug] [2025-08-24T22:51:34.474Z] [iam] checking project mamavisit1 for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2025-08-24T22:51:34.475Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:34.475Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:34.476Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/mamavisit1:testIamPermissions [none]
+[debug] [2025-08-24T22:51:34.477Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/mamavisit1:testIamPermissions x-goog-quota-user=projects/mamavisit1
+[debug] [2025-08-24T22:51:34.477Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/mamavisit1:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-08-24T22:51:35.098Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/mamavisit1:testIamPermissions 200
+[debug] [2025-08-24T22:51:35.098Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/mamavisit1:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-08-24T22:51:35.098Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:35.098Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:35.099Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/mamavisit1 [none]
+[debug] [2025-08-24T22:51:35.599Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/mamavisit1 200
+[debug] [2025-08-24T22:51:35.599Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/mamavisit1 {"projectId":"mamavisit1","projectNumber":"703346436628","displayName":"mamavisit1","name":"projects/mamavisit1","resources":{"hostingSite":"mamavisit1"},"state":"ACTIVE","etag":"1_b420e892-1e7f-4d72-a288-9790bd9047de"}
+[info] 
+[info] === Deploying to 'mamavisit1'...
+[info] 
+[info] i  deploying firestore, hosting 
+[info] i  firestore: reading indexes from firestore.indexes.json... 
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2025-08-24T22:51:35.605Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:35.605Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:35.605Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/mamavisit1:test [none]
+[debug] [2025-08-24T22:51:35.605Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/mamavisit1:test [omitted]
+[debug] [2025-08-24T22:51:35.918Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/mamavisit1:test 200
+[debug] [2025-08-24T22:51:35.919Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/mamavisit1:test {}
+[info] +  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2025-08-24T22:51:35.920Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:35.920Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:35.921Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/mamavisit1/versions [none]
+[debug] [2025-08-24T22:51:35.921Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/mamavisit1/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2025-08-24T22:51:36.648Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/mamavisit1/versions 200
+[debug] [2025-08-24T22:51:36.648Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/mamavisit1/versions {"name":"projects/703346436628/sites/mamavisit1/versions/cf32236f292e1572","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2025-08-24T22:51:36.648Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:36.648Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:36.649Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/mamavisit1/databases/(default) [none]
+[debug] [2025-08-24T22:51:37.306Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/mamavisit1/databases/(default) 200
+[debug] [2025-08-24T22:51:37.306Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/mamavisit1/databases/(default) {"name":"projects/mamavisit1/databases/(default)","uid":"dfd1bcaf-b270-40bf-8b1c-fb38837576c1","createTime":"2025-08-24T17:37:03.645854Z","updateTime":"2025-08-24T17:37:03.645854Z","locationId":"us-central1","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2025-08-24T21:51:37.449384Z","appEngineIntegrationMode":"DISABLED","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"etag":"ILbPw8DEpI8DMLGSobT+o48D"}
+[debug] [2025-08-24T22:51:37.306Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:37.306Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:37.307Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/mamavisit1/releases pageSize=10&pageToken=
+[debug] [2025-08-24T22:51:37.482Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/mamavisit1/releases 200
+[debug] [2025-08-24T22:51:37.482Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/mamavisit1/releases {"releases":[{"name":"projects/mamavisit1/releases/cloud.firestore","rulesetName":"projects/mamavisit1/rulesets/50743b6a-0f42-4bc8-b600-ef22e58787ae","createTime":"2025-08-24T17:40:26.460726Z","updateTime":"2025-08-24T22:48:16.214930Z"}]}
+[debug] [2025-08-24T22:51:37.482Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:37.482Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:37.482Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/mamavisit1/rulesets/50743b6a-0f42-4bc8-b600-ef22e58787ae [none]
+[debug] [2025-08-24T22:51:37.731Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/mamavisit1/rulesets/50743b6a-0f42-4bc8-b600-ef22e58787ae 200
+[debug] [2025-08-24T22:51:37.732Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/mamavisit1/rulesets/50743b6a-0f42-4bc8-b600-ef22e58787ae [omitted]
+[info] i  firestore: latest version of firestore.rules already up to date, skipping upload... 
+[info] i  firestore: deploying indexes... 
+[debug] [2025-08-24T22:51:37.734Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:37.734Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:37.734Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/mamavisit1/databases/(default)/collectionGroups/-/indexes [none]
+[debug] [2025-08-24T22:51:37.861Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/mamavisit1/databases/(default)/collectionGroups/-/indexes 200
+[debug] [2025-08-24T22:51:37.861Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/mamavisit1/databases/(default)/collectionGroups/-/indexes {}
+[debug] [2025-08-24T22:51:37.862Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:37.862Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:37.862Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/mamavisit1/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* [none]
+[debug] [2025-08-24T22:51:37.982Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/mamavisit1/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* 200
+[debug] [2025-08-24T22:51:37.982Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/mamavisit1/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* {"fields":[{"name":"projects/mamavisit1/databases/(default)/collectionGroups/__default__/fields/*","indexConfig":{"indexes":[{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","order":"ASCENDING"}],"state":"READY"},{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","order":"DESCENDING"}],"state":"READY"},{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","arrayConfig":"CONTAINS"}],"state":"READY"}]}}]}
+[debug] [2025-08-24T22:51:37.982Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:37.982Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:37.982Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/mamavisit1/databases/(default) [none]
+[debug] [2025-08-24T22:51:38.333Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/mamavisit1/databases/(default) 200
+[debug] [2025-08-24T22:51:38.333Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/mamavisit1/databases/(default) {"name":"projects/mamavisit1/databases/(default)","uid":"dfd1bcaf-b270-40bf-8b1c-fb38837576c1","createTime":"2025-08-24T17:37:03.645854Z","updateTime":"2025-08-24T17:37:03.645854Z","locationId":"us-central1","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2025-08-24T21:51:38.477466Z","appEngineIntegrationMode":"DISABLED","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"etag":"IPGxgsHEpI8DMLGSobT+o48D"}
+[info] +  firestore: deployed indexes in firestore.indexes.json successfully for (default) database 
+[info] i  hosting[mamavisit1]: beginning deploy... 
+[info] i  hosting[mamavisit1]: found 23 files in build 
+[debug] [2025-08-24T22:51:38.353Z] [hosting] uploading with 200 concurrency
+[debug] [2025-08-24T22:51:38.712Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:38.712Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:38.713Z] [hosting] hash cache [YnVpbGQ] stored for 23 files
+[debug] [2025-08-24T22:51:38.714Z] [hosting][hash queue][FINAL] {"max":355,"min":0,"avg":20.695652173913043,"active":0,"complete":23,"success":23,"errored":0,"retried":0,"total":23,"elapsed":359}
+[debug] [2025-08-24T22:51:38.714Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/703346436628/sites/mamavisit1/versions/cf32236f292e1572:populateFiles [none]
+[debug] [2025-08-24T22:51:38.714Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/703346436628/sites/mamavisit1/versions/cf32236f292e1572:populateFiles {"files":{"/robots.txt":"bfe106a3fb878dc83461c86818bf74fc1bdc7f28538ba613cd3e775516ce8b49","/manifest.json":"ee04fb47e525c67d8424ffe9b4d8a8a24e434504478afca4e0ca602146836d4c","/logo512.png":"212b102aa09e51b3b3e06647e81f7801a61333e171f6582e8124379aabccb41d","/logo192.png":"79e2b749561016bc8af300ea19f48347ceed3cb1a54f48ae456172eca45e08f0","/favicon.ico":"27edce7be5922cf0bef7d4136f69b5bfbdd5bf8c13c7b026f71187d41a00aa7d","/images/hotel-sofa-bed.jpg.jpg":"c52ab2ed80bd59f82ad097ccf9f4bbe0d8aed84b79b7ffa0038fac9a548b4c98","/images/hotel-kitchen.jpg.jpg":"2154912ce36382058c724c4043a4a6557475cbfcee3d36ef5b34bde2968ef426","/images/hotel-general-view.jpg.jpg":"479d5727bcc7716612151a9b3f3e61e1f18a09751b781605eb76cd463de5c4b5","/images/hotel-bathroom.jpg.jpg":"6f69f579eb1a09e98a8c0f4b8dec032c40ef4a74110a25cea5c9a3bf3c3ebde1","/images/hello.mp4":"547fd8e4d942632f406c6852e6199081b41c3717c43be9b2145578c0ea603dc9","/images/family.MP4":"25fa5092b3fd1025bd4015174d57c45a056d8117aa926e6c6a37bcf6c99320a9","/images/echo.png":"5ce0e0fcf984a81eef4fe3ec0f97c7c824a18524e81112aa9c067298ac24afad","/images/Alina and Aspen.jpg":"65ec4e120824188ebe3fbbeb02a7ffa249b38a690110a2eb6dd4c247ddb75406","/index.html":"d075c65a1542a367bad95d7d7ca6da7f1938217227cfe8c1a02b4e021676112e","/asset-manifest.json":"4ff3a1ec65ab6ed7d3dfb8163f3718a755920cd0c0b69399becf699d4a4d7901","/static/js/main.79a94c59.js.LICENSE.txt":"5ed7f1aa771677bda0af175f227ecf63c506dd35c0505da21591992df3f8b12b","/static/js/453.1e025af9.chunk.js":"88e5f51003adaa902684b9c6cf8ad37acc47337681eeadba37a1cffe791d3e75","/static/css/main.e6c13ad2.css.map":"f04a63909cca3733d97f9e07379739ab666aeb79b15e6800ce9ebca27689d862","/static/css/main.e6c13ad2.css":"10675dc14dd390bf45eef8a0221880c7b5b9a5ac519a13bc0890261e6b1e84fa","/static/js/453.1e025af9.chunk.js.map":"99986ee8b86a2e4ea9690bb57475435b290c3681184c620b18d7653f4d4759ff","/images/drink.jpg":"9ef66cedeb7feabb8d2d982786eb1cb7a8fd853ce9c6f1d2703f77f8ed10e4e6","/static/js/main.79a94c59.js":"97a5b0a0f75b9f56fd077e53acd2d41c7a369d2eca9c3538fc41219020daf322","/static/js/main.79a94c59.js.map":"7166f5236f48fa81fb5a0761bd6c0e2999ab4409114811639dbe9a9cd9516c22"}}
+[debug] [2025-08-24T22:51:39.258Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/703346436628/sites/mamavisit1/versions/cf32236f292e1572:populateFiles 200
+[debug] [2025-08-24T22:51:39.258Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/703346436628/sites/mamavisit1/versions/cf32236f292e1572:populateFiles {"uploadRequiredHashes":["97a5b0a0f75b9f56fd077e53acd2d41c7a369d2eca9c3538fc41219020daf322","4ff3a1ec65ab6ed7d3dfb8163f3718a755920cd0c0b69399becf699d4a4d7901","9ef66cedeb7feabb8d2d982786eb1cb7a8fd853ce9c6f1d2703f77f8ed10e4e6","d075c65a1542a367bad95d7d7ca6da7f1938217227cfe8c1a02b4e021676112e","7166f5236f48fa81fb5a0761bd6c0e2999ab4409114811639dbe9a9cd9516c22"],"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/mamavisit1/versions/cf32236f292e1572/files"}
+[debug] [2025-08-24T22:51:39.259Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:39.259Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:39.259Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:39.259Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:39.259Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:39.259Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:39.259Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:39.259Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:39.260Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:39.260Z] Checked if tokens are valid: true, expires at: 1756079274983
+[debug] [2025-08-24T22:51:39.260Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/mamavisit1/versions/cf32236f292e1572/files/97a5b0a0f75b9f56fd077e53acd2d41c7a369d2eca9c3538fc41219020daf322 [none]
+[debug] [2025-08-24T22:51:39.260Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/mamavisit1/versions/cf32236f292e1572/files/97a5b0a0f75b9f56fd077e53acd2d41c7a369d2eca9c3538fc41219020daf322 [stream]
+[debug] [2025-08-24T22:51:39.261Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/mamavisit1/versions/cf32236f292e1572/files/4ff3a1ec65ab6ed7d3dfb8163f3718a755920cd0c0b69399becf699d4a4d7901 [none]
+[debug] [2025-08-24T22:51:39.261Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/mamavisit1/versions/cf32236f292e1572/files/4ff3a1ec65ab6ed7d3dfb8163f3718a755920cd0c0b69399becf699d4a4d7901 [stream]
+[debug] [2025-08-24T22:51:39.262Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/mamavisit1/versions/cf32236f292e1572/files/9ef66cedeb7feabb8d2d982786eb1cb7a8fd853ce9c6f1d2703f77f8ed10e4e6 [none]
+[debug] [2025-08-24T22:51:39.262Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/mamavisit1/versions/cf32236f292e1572/files/9ef66cedeb7feabb8d2d982786eb1cb7a8fd853ce9c6f1d2703f77f8ed10e4e6 [stream]
+[debug] [2025-08-24T22:51:39.263Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/mamavisit1/versions/cf32236f292e1572/files/d075c65a1542a367bad95d7d7ca6da7f1938217227cfe8c1a02b4e021676112e [none]
+[debug] [2025-08-24T22:51:39.263Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/mamavisit1/versions/cf32236f292e1572/files/d075c65a1542a367bad95d7d7ca6da7f1938217227cfe8c1a02b4e021676112e [stream]
+[debug] [2025-08-24T22:51:39.264Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/mamavisit1/versions/cf32236f292e1572/files/7166f5236f48fa81fb5a0761bd6c0e2999ab4409114811639dbe9a9cd9516c22 [none]
+[debug] [2025-08-24T22:51:39.265Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/mamavisit1/versions/cf32236f292e1572/files/7166f5236f48fa81fb5a0761bd6c0e2999ab4409114811639dbe9a9cd9516c22 [stream]
+[debug] [2025-08-24T22:51:39.266Z] [hosting][populate queue][FINAL] {"max":548,"min":548,"avg":548,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":554}
+[debug] [2025-08-24T22:51:39.266Z] [hosting] uploads queued: 5

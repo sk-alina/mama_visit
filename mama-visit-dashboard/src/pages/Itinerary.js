@@ -360,6 +360,82 @@ function Itinerary() {
         </Grid>
 
         <Grid item xs={12} md={4}>
+          {/* September 2025 Calendar */}
+          <Card sx={{ mb: 3 }}>
+            <CardContent sx={{ p: 3 }}>
+              <Typography variant="h6" sx={{ mb: 2, color: 'primary.main' }}>
+                📅 Сентябрь 2025
+              </Typography>
+              <Box sx={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(7, 1fr)', 
+                gap: 1, 
+                textAlign: 'center',
+                mb: 2
+              }}>
+                {/* Days of week header */}
+                {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((day) => (
+                  <Typography key={day} variant="caption" sx={{ fontWeight: 'bold', color: 'text.secondary' }}>
+                    {day}
+                  </Typography>
+                ))}
+                
+                {/* Calendar days */}
+                {Array.from({ length: 30 }, (_, i) => {
+                  const day = i + 1;
+                  const dayOfWeek = (i) % 7; // September 1, 2025 is a Monday (0)
+                  const isVisitPeriod = day >= 12 && day <= 29;
+                  
+                  return (
+                    <Box
+                      key={day}
+                      sx={{
+                        p: 0.5,
+                        borderRadius: 1,
+                        backgroundColor: isVisitPeriod ? 'primary.light' : 'transparent',
+                        color: isVisitPeriod ? 'white' : 'text.primary',
+                        fontSize: '0.875rem',
+                        fontWeight: isVisitPeriod ? 'bold' : 'normal',
+                      }}
+                    >
+                      {day}
+                    </Box>
+                  );
+                })}
+              </Box>
+
+            </CardContent>
+          </Card>
+
+          {/* Echo's Picture */}
+          <Card sx={{ mb: 3 }}>
+            <CardContent sx={{ p: 3, textAlign: 'center' }}>
+              <Typography variant="h6" sx={{ mb: 2, color: 'secondary.main' }}>
+                🐱 Эхо ждёт встречи!
+              </Typography>
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                mb: 2 
+              }}>
+                <img
+                  src="/images/echo.png"
+                  alt="Echo the cat"
+                  style={{
+                    width: '150px',
+                    height: '150px',
+                    objectFit: 'cover',
+                    borderRadius: '50%',
+                    border: '3px solid #e0e0e0',
+                  }}
+                />
+              </Box>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                Наш любимый котик Эхо с нетерпением ждёт знакомства! 💕
+              </Typography>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="h6" sx={{ mb: 3, color: 'secondary.main' }}>

@@ -281,6 +281,74 @@ function Diary() {
         </Typography>
       </Box>
 
+      {/* Family Video Section */}
+      <Card sx={{ mb: 4, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+        <CardContent sx={{ p: 3, textAlign: 'center' }}>
+          <Typography variant="h5" sx={{ color: 'white', mb: 2 }}>
+            👨‍👩‍👧‍👦 Наше кредо
+          </Typography>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            mb: 2 
+          }}>
+            <Box
+              sx={{
+                position: 'relative',
+                width: '300px',
+                height: '200px',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                const video = document.getElementById('family-video');
+                if (video.paused) {
+                  video.play();
+                } else {
+                  video.pause();
+                }
+              }}
+            >
+              <video
+                id="family-video"
+                src="/images/family.MP4"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
+                controls
+                preload="metadata"
+              />
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  color: 'white',
+                  backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                  borderRadius: '50%',
+                  p: 1.5,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  pointerEvents: 'none',
+                  opacity: 0.8,
+                }}
+              >
+                <PlayIcon sx={{ fontSize: 30 }} />
+              </Box>
+            </Box>
+          </Box>
+          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+            Пусть наше чудесное прошлое вдохновляет нас на еще более прекрасное будующее 💕
+          </Typography>
+        </CardContent>
+      </Card>
+
       <Grid container spacing={3}>
         {/* Statistics Card */}
         <Grid item xs={12} md={4}>

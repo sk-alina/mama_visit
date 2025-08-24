@@ -356,6 +356,43 @@ function Wishlist() {
         </Typography>
       </Box>
 
+      {/* Featured Drink Section */}
+      <Card sx={{ mb: 4, background: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%)' }}>
+        <CardContent sx={{ p: 3, textAlign: 'center' }}>
+          <Typography variant="h5" sx={{ color: 'white', mb: 2 }}>
+            🥤 Особенный напиток
+          </Typography>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            mb: 2 
+          }}>
+            <Box
+              sx={{
+                width: '200px',
+                height: '150px',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+              }}
+            >
+              <img
+                src="/images/drink.jpg"
+                alt="Special drink"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
+              />
+            </Box>
+          </Box>
+          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+            Напиток, который обязательно нужно попробовать! 🌟
+          </Typography>
+        </CardContent>
+      </Card>
+
       <Grid container spacing={3}>
         {/* Statistics */}
         <Grid item xs={12} md={4}>
