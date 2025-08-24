@@ -172,48 +172,48 @@ function Lodging() {
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                  <Box sx={{ mb: 3 }}>
-                    <Typography variant="h6" sx={{ color: 'secondary.main', mb: 2 }}>
-                      🏠 Удобства номера
-                    </Typography>
-                    <Grid container spacing={1}>
-                      <Grid item xs={12} sm={6}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                          <KitchenIcon sx={{ color: 'success.main', mr: 1 }} />
-                          <Typography variant="body2">Полная кухня</Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                          <WifiIcon sx={{ color: 'success.main', mr: 1 }} />
-                          <Typography variant="body2">Бесплатный Wi-Fi</Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                          <TvIcon sx={{ color: 'success.main', mr: 1 }} />
-                          <Typography variant="body2">Smart TV</Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                          <LaundryIcon sx={{ color: 'success.main', mr: 1 }} />
-                          <Typography variant="body2">Прачечная</Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                          <LocationIcon sx={{ color: 'success.main', mr: 1 }} />
-                          <Typography variant="body2">15 минут езды от дома Алины</Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                          <Typography variant="body2" sx={{ ml: 3 }}>🐱 Проживание с замечательным котом по имени Эхо</Typography>
-                        </Box>
-                      </Grid>
-                    </Grid>
-                  </Box>
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="h6" sx={{ color: 'secondary.main', mb: 2 }}>
+                  🏠 Удобства номера
+                </Typography>
+                <Grid container spacing={1}>
+                  <Grid item xs={12} sm={6}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <KitchenIcon sx={{ color: 'success.main', mr: 1 }} />
+                      <Typography variant="body2">Полная кухня</Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <WifiIcon sx={{ color: 'success.main', mr: 1 }} />
+                      <Typography variant="body2">Бесплатный Wi-Fi</Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <TvIcon sx={{ color: 'success.main', mr: 1 }} />
+                      <Typography variant="body2">Smart TV</Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <LaundryIcon sx={{ color: 'success.main', mr: 1 }} />
+                      <Typography variant="body2">Прачечная</Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <LocationIcon sx={{ color: 'success.main', mr: 1 }} />
+                      <Typography variant="body2">15 минут езды от дома Алины</Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <Typography variant="body2" sx={{ ml: 3 }}>🐱 Проживание с замечательным котом по имени Эхо</Typography>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Box>
 
                   <Box sx={{ mb: 3 }}>
                     <Typography variant="h6" sx={{ color: 'secondary.main', mb: 2 }}>
@@ -420,56 +420,13 @@ function Lodging() {
                 <Typography variant="body1" sx={{ mb: 2 }}>
                   <strong>Номерной знак:</strong> {carInfo.licensePlate}
                 </Typography>
-                <Chip 
-                  label={`Парковка: ${carInfo.parkingSpot}`} 
-                  color="secondary" 
-                  variant="outlined" 
-                />
-              </Box>
-
-              <Divider sx={{ my: 3 }} />
-
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="h6" sx={{ color: 'secondary.main', mb: 2 }}>
-                  🔑 Ключи и доступ
-                </Typography>
-                <List dense>
-                  <ListItem sx={{ px: 0 }}>
-                    <ListItemIcon><KeyIcon color="secondary" /></ListItemIcon>
-                    <ListItemText 
-                      primary="Ключи от машины" 
-                      secondary={carInfo.keyLocation}
-                    />
-                  </ListItem>
-                  <ListItem sx={{ px: 0 }}>
-                    <ListItemIcon><LocationIcon color="secondary" /></ListItemIcon>
-                    <ListItemText 
-                      primary="Заправка" 
-                      secondary={carInfo.gasStation}
-                    />
-                  </ListItem>
-                </List>
-              </Box>
-
-              <Divider sx={{ my: 3 }} />
-
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="h6" sx={{ color: 'secondary.main', mb: 2 }}>
-                  📋 Страховка и экстренные службы
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                  <strong>Страховая компания:</strong> {carInfo.insurance}
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 2 }}>
-                  <strong>Дорожная помощь:</strong> {carInfo.emergencyRoadside}
-                </Typography>
               </Box>
 
               <Divider sx={{ my: 3 }} />
 
               <Box>
                 <Typography variant="h6" sx={{ color: 'secondary.main', mb: 2 }}>
-                  💡 Особые заметки
+                  📝 Важные заметки
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
                   {carInfo.specialNotes}
