@@ -23,6 +23,7 @@ import {
   Book as BookIcon,
   Favorite as FavoriteIcon,
   ContactPhone as ContactIcon,
+  Luggage as LuggageIcon,
 } from '@mui/icons-material';
 
 const drawerWidth = 280;
@@ -33,6 +34,7 @@ const menuItems = [
   { text: 'Жильё и машина', icon: <HotelIcon />, path: '/lodging' },
   { text: 'Дневник путешествий', icon: <BookIcon />, path: '/diary' },
   { text: 'Список желаний', icon: <FavoriteIcon />, path: '/wishlist' },
+  { text: 'Что везти', icon: <LuggageIcon />, path: '/packing' },
   { text: 'Контакты', icon: <ContactIcon />, path: '/contact' },
 ];
 

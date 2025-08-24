@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -7,11 +7,13 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/ru';
 
 import Layout from './components/Layout';
+import WelcomeSplash from './components/WelcomeSplash';
 import Home from './pages/Home';
 import Itinerary from './pages/Itinerary';
 import Lodging from './pages/Lodging';
 import Diary from './pages/Diary';
 import Wishlist from './pages/Wishlist';
+import Packing from './pages/Packing';
 import Contact from './pages/Contact';
 
 const theme = createTheme({
@@ -79,10 +81,32 @@ const theme = createTheme({
 });
 
 function App() {
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [isFirstVisit, setIsFirstVisit] = useState(true);
+
+  useEffect(() => {
+    // Check if this is the first visit
+    const hasVisited = localStorage.getItem('mama-visit-welcomed');
+    if (!hasVisited) {
+      setShowWelcome(true);
+      setIsFirstVisit(true);
+    } else {
+      setIsFirstVisit(false);
+    }
+  }, []);
+
+  const handleWelcomeComplete = () => {
+    setShowWelcome(false);
+    localStorage.setItem('mama-visit-welcomed', 'true');
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
+        {showWelcome && isFirstVisit && (
+          <WelcomeSplash onComplete={handleWelcomeComplete} />
+        )}
         <Router>
           <Layout>
             <Routes>
@@ -91,6 +115,7 @@ function App() {
               <Route path="/lodging" element={<Lodging />} />
               <Route path="/diary" element={<Diary />} />
               <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/packing" element={<Packing />} />
               <Route path="/contact" element={<Contact />} />
             </Routes>
           </Layout>
