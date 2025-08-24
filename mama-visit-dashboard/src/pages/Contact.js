@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -20,6 +20,7 @@ import {
   IconButton,
   Chip,
   Paper,
+  CircularProgress,
 } from '@mui/material';
 import {
   Phone as PhoneIcon,
@@ -33,47 +34,85 @@ import {
   ContactPhone as ContactPhoneIcon,
   Home as HomeIcon,
 } from '@mui/icons-material';
+import { useContacts, useAddressInfo } from '../hooks/useFirestore';
 
 function Contact() {
+  // Use Firestore hooks for persistent data
+  const { 
+    data: contacts, 
+    loading: contactsLoading, 
+    error: contactsError,
+    addDocument: addContact,
+    updateDocument: updateContact,
+    deleteDocument: deleteContact
+  } = useContacts();
+
+  const { 
+    data: addressData, 
+    loading: addressLoading, 
+    error: addressError,
+    addDocument: addAddress,
+    updateDocument: updateAddress
+  } = useAddressInfo();
+
   const [editDialog, setEditDialog] = useState({ open: false, type: '', data: {} });
   const [addContactDialog, setAddContactDialog] = useState(false);
   const [newContact, setNewContact] = useState({ name: '', phone: '', relation: '' });
 
-  const [mainContacts, setMainContacts] = useState([
-    {
-      id: '1',
-      name: 'Дочка',
-      phone: '510-417-6856',
-      relation: 'Дочь',
-      primary: true,
-    },
-    {
-      id: '2',
-      name: 'Aspen',
-      phone: '413-205-7451',
-      relation: 'Зять',
-      primary: true,
-    },
-  ]);
+  // Separate main and additional contacts from Firestore data
+  const mainContacts = contacts.filter(contact => contact.primary);
+  const additionalContacts = contacts.filter(contact => !contact.primary);
 
-  const [additionalContacts, setAdditionalContacts] = useState([
-    {
-      id: '3',
-      name: 'Соседи (Джон и Мэри)',
-      phone: '860-555-0123',
-      relation: 'Соседи',
-      primary: false,
-    },
-  ]);
-
-  const [addressInfo, setAddressInfo] = useState({
+  // Get address info (should be a single document)
+  const addressInfo = addressData.length > 0 ? addressData[0] : {
     street: '22 Edgewater Circle',
     city: 'Berlin',
     state: 'CT',
     zipCode: '06037',
     country: 'США',
-    directions: 'Дом находится в тихом районе, рядом с парком. Белый дом с синими ставнями.',
-  });
+    directions: 'Дом рядом с озером, в тихом районе.',
+  };
+
+  // Initialize with sample data if database is empty
+  useEffect(() => {
+    if (!contactsLoading && contacts.length === 0) {
+      const sampleContacts = [
+        {
+          name: 'Дочка',
+          phone: '510-417-6856',
+          relation: 'Дочка кукунечка',
+          primary: true,
+        },
+        {
+          name: 'Аспен',
+          phone: '413-205-7451',
+          relation: 'Зять!',
+          primary: true,
+        },
+      ];
+
+      // Add sample contacts
+      sampleContacts.forEach(contact => {
+        addContact(contact).catch(console.error);
+      });
+    }
+  }, [contactsLoading, contacts.length, addContact]);
+
+  // Initialize address if database is empty
+  useEffect(() => {
+    if (!addressLoading && addressData.length === 0) {
+      const sampleAddress = {
+        street: '22 Edgewater Circle',
+        city: 'Berlin',
+        state: 'CT',
+        zipCode: '06037',
+        country: 'США',
+        directions: 'Дом рядом с озером, в тихом районе.',
+      };
+
+      addAddress(sampleAddress).catch(console.error);
+    }
+  }, [addressLoading, addressData.length, addAddress]);
 
   const emergencyServices = [
     {
@@ -110,37 +149,45 @@ function Contact() {
     setEditDialog({ open: true, type: 'contact', data: { ...contact } });
   };
 
-  const handleSave = () => {
-    if (editDialog.type === 'address') {
-      setAddressInfo(editDialog.data);
-    } else if (editDialog.type === 'contact') {
-      const updatedContact = editDialog.data;
-      if (updatedContact.primary) {
-        setMainContacts(mainContacts.map(contact =>
-          contact.id === updatedContact.id ? updatedContact : contact
-        ));
-      } else {
-        setAdditionalContacts(additionalContacts.map(contact =>
-          contact.id === updatedContact.id ? updatedContact : contact
-        ));
+  const handleSave = async () => {
+    try {
+      if (editDialog.type === 'address') {
+        // Update address info
+        if (addressInfo.id) {
+          await updateAddress(addressInfo.id, editDialog.data);
+        } else {
+          await addAddress(editDialog.data);
+        }
+      } else if (editDialog.type === 'contact') {
+        // Update contact
+        const updatedContact = editDialog.data;
+        await updateContact(updatedContact.id, updatedContact);
       }
+      setEditDialog({ open: false, type: '', data: {} });
+    } catch (error) {
+      console.error('Error saving data:', error);
     }
-    setEditDialog({ open: false, type: '', data: {} });
   };
 
-  const handleAddContact = () => {
-    const contact = {
-      id: Date.now().toString(),
-      ...newContact,
-      primary: false,
-    };
-    setAdditionalContacts([...additionalContacts, contact]);
-    setNewContact({ name: '', phone: '', relation: '' });
-    setAddContactDialog(false);
+  const handleAddContact = async () => {
+    try {
+      await addContact({
+        ...newContact,
+        primary: false,
+      });
+      setNewContact({ name: '', phone: '', relation: '' });
+      setAddContactDialog(false);
+    } catch (error) {
+      console.error('Error adding contact:', error);
+    }
   };
 
-  const handleDeleteContact = (id) => {
-    setAdditionalContacts(additionalContacts.filter(contact => contact.id !== id));
+  const handleDeleteContact = async (id) => {
+    try {
+      await deleteContact(id);
+    } catch (error) {
+      console.error('Error deleting contact:', error);
+    }
   };
 
   const handleInputChange = (field, value) => {

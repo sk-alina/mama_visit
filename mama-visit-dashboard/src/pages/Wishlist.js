@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -24,6 +24,7 @@ import {
   Avatar,
   Divider,
   Fab,
+  CircularProgress,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -52,6 +53,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useWishlist } from '../hooks/useFirestore';
 
 // Sortable Item Component
 function SortableItem({ id, item, onEdit, onDelete, onToggleComplete, type }) {
@@ -159,59 +161,15 @@ function Wishlist() {
   const [editingItem, setEditingItem] = useState(null);
   const [currentType, setCurrentType] = useState('wishlist');
 
-  const [wishlistItems, setWishlistItems] = useState([
-    {
-      id: '1',
-      title: 'Посетить Статую Свободы',
-      description: 'Увидеть знаменитую статую и сделать фотографии',
-      priority: 'Высокий',
-      location: 'Нью-Йорк',
-      completed: false,
-    },
-    {
-      id: '2',
-      title: 'Попробовать настоящую американскую пиццу',
-      description: 'Найти хорошую пиццерию и попробовать местную кухню',
-      priority: 'Средний',
-      location: 'Любое место',
-      completed: false,
-    },
-    {
-      id: '3',
-      title: 'Прогуляться по Центральному парку',
-      description: 'Насладиться природой в центре большого города',
-      priority: 'Средний',
-      location: 'Нью-Йорк',
-      completed: true,
-    },
-  ]);
-
-  const [shoppingItems, setShoppingItems] = useState([
-    {
-      id: '1',
-      title: 'Подарки для внуков',
-      description: 'Игрушки и сувениры из Америки',
-      quantity: '3-4 штуки',
-      priority: 'Высокий',
-      completed: false,
-    },
-    {
-      id: '2',
-      title: 'Американский кофе',
-      description: 'Хороший кофе для дома',
-      quantity: '2 пачки',
-      priority: 'Средний',
-      completed: false,
-    },
-    {
-      id: '3',
-      title: 'Магниты на холодильник',
-      description: 'Сувениры с видами городов',
-      quantity: '5-6 штук',
-      priority: 'Низкий',
-      completed: false,
-    },
-  ]);
+  // Use Firestore hook for persistent data
+  const { 
+    data: wishlistData, 
+    loading: wishlistLoading, 
+    error: wishlistError,
+    addDocument: addWishlistItem,
+    updateDocument: updateWishlistItem,
+    deleteDocument: deleteWishlistItem
+  } = useWishlist();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -221,6 +179,74 @@ function Wishlist() {
     quantity: '',
   });
 
+  // Separate wishlist and shopping items from Firestore data
+  const wishlistItems = wishlistData.filter(item => item.type === 'wishlist' || !item.type);
+  const shoppingItems = wishlistData.filter(item => item.type === 'shopping');
+
+  // Initialize with sample data if database is empty
+  useEffect(() => {
+    if (!wishlistLoading && wishlistData.length === 0) {
+      const sampleWishlistItems = [
+        {
+          title: 'Посетить Статую Свободы',
+          description: 'Увидеть знаменитую статую и сделать фотографии',
+          priority: 'Высокий',
+          location: 'Нью-Йорк',
+          completed: false,
+          type: 'wishlist',
+        },
+        {
+          title: 'Попробовать настоящую американскую пиццу',
+          description: 'Найти хорошую пиццерию и попробовать местную кухню',
+          priority: 'Средний',
+          location: 'Любое место',
+          completed: false,
+          type: 'wishlist',
+        },
+        {
+          title: 'Прогуляться по Центральному парку',
+          description: 'Насладиться природой в центре большого города',
+          priority: 'Средний',
+          location: 'Нью-Йорк',
+          completed: true,
+          type: 'wishlist',
+        },
+      ];
+
+      const sampleShoppingItems = [
+        {
+          title: 'Подарки для внуков',
+          description: 'Игрушки и сувениры из Америки',
+          quantity: '3-4 штуки',
+          priority: 'Высокий',
+          completed: false,
+          type: 'shopping',
+        },
+        {
+          title: 'Американский кофе',
+          description: 'Хороший кофе для дома',
+          quantity: '2 пачки',
+          priority: 'Средний',
+          completed: false,
+          type: 'shopping',
+        },
+        {
+          title: 'Магниты на холодильник',
+          description: 'Сувениры с видами городов',
+          quantity: '5-6 штук',
+          priority: 'Низкий',
+          completed: false,
+          type: 'shopping',
+        },
+      ];
+
+      // Add sample data
+      [...sampleWishlistItems, ...sampleShoppingItems].forEach(item => {
+        addWishlistItem(item).catch(console.error);
+      });
+    }
+  }, [wishlistLoading, wishlistData.length, addWishlistItem]);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -228,19 +254,26 @@ function Wishlist() {
     })
   );
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = async (event) => {
     const { active, over } = event;
 
     if (active.id !== over.id) {
       const items = currentType === 'wishlist' ? wishlistItems : shoppingItems;
-      const setItems = currentType === 'wishlist' ? setWishlistItems : setShoppingItems;
+      const oldIndex = items.findIndex((item) => item.id === active.id);
+      const newIndex = items.findIndex((item) => item.id === over.id);
       
-      setItems((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
+      const reorderedItems = arrayMove(items, oldIndex, newIndex);
+      
+      // Update order in Firestore
+      try {
+        await Promise.all(
+          reorderedItems.map((item, index) =>
+            updateWishlistItem(item.id, { order: index })
+          )
+        );
+      } catch (error) {
+        console.error('Error updating item order:', error);
+      }
     }
   };
 
@@ -269,42 +302,42 @@ function Wishlist() {
     setOpen(true);
   };
 
-  const handleSave = () => {
-    const items = currentType === 'wishlist' ? wishlistItems : shoppingItems;
-    const setItems = currentType === 'wishlist' ? setWishlistItems : setShoppingItems;
-
-    if (editingItem) {
-      setItems(items.map(item =>
-        item.id === editingItem.id
-          ? { ...item, ...formData }
-          : item
-      ));
-    } else {
-      const newItem = {
-        id: Date.now().toString(),
-        ...formData,
-        completed: false,
-      };
-      setItems([...items, newItem]);
+  const handleSave = async () => {
+    try {
+      if (editingItem) {
+        // Update existing item
+        await updateWishlistItem(editingItem.id, formData);
+      } else {
+        // Add new item
+        await addWishlistItem({
+          ...formData,
+          type: currentType,
+          completed: false,
+        });
+      }
+      setOpen(false);
+    } catch (error) {
+      console.error('Error saving item:', error);
     }
-    setOpen(false);
   };
 
-  const handleDelete = (id) => {
-    const items = currentType === 'wishlist' ? wishlistItems : shoppingItems;
-    const setItems = currentType === 'wishlist' ? setWishlistItems : setShoppingItems;
-    setItems(items.filter(item => item.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await deleteWishlistItem(id);
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
   };
 
-  const handleToggleComplete = (id) => {
-    const items = tabValue === 0 ? wishlistItems : shoppingItems;
-    const setItems = tabValue === 0 ? setWishlistItems : setShoppingItems;
-    
-    setItems(items.map(item =>
-      item.id === id
-        ? { ...item, completed: !item.completed }
-        : item
-    ));
+  const handleToggleComplete = async (id) => {
+    try {
+      const item = wishlistData.find(item => item.id === id);
+      if (item) {
+        await updateWishlistItem(id, { completed: !item.completed });
+      }
+    } catch (error) {
+      console.error('Error updating item:', error);
+    }
   };
 
   const currentItems = tabValue === 0 ? wishlistItems : shoppingItems;

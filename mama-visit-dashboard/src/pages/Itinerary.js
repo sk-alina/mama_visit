@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -19,6 +19,7 @@ import {
   Grid,
   Paper,
   Avatar,
+  CircularProgress,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -48,6 +49,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useItinerary } from '../hooks/useFirestore';
 
 // Sortable Item Component
 function SortableItem({ id, item, onEdit, onDelete }) {
@@ -92,14 +94,14 @@ function SortableItem({ id, item, onEdit, onDelete }) {
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
             <Chip
               icon={<EventIcon />}
-              label={dayjs(item.dateTime).format('DD MMMM YYYY')}
+              label={dayjs(item.date).format('DD MMMM YYYY')}
               size="small"
               color="primary"
               variant="outlined"
             />
             <Chip
               icon={<ScheduleIcon />}
-              label={dayjs(item.dateTime).format('HH:mm')}
+              label={dayjs(item.date).format('HH:mm')}
               size="small"
               color="secondary"
               variant="outlined"
@@ -121,26 +123,15 @@ function SortableItem({ id, item, onEdit, onDelete }) {
 }
 
 function Itinerary() {
-  const [events, setEvents] = useState([
-    {
-      id: '1',
-      title: 'Прилёт мамы',
-      description: 'Встреча в аэропорту, поездка домой',
-      dateTime: dayjs('2024-09-12T14:00'),
-    },
-    {
-      id: '2',
-      title: 'Ужин дома',
-      description: 'Первый семейный ужин, знакомство с домом',
-      dateTime: dayjs('2024-09-12T19:00'),
-    },
-    {
-      id: '3',
-      title: 'Прогулка по городу',
-      description: 'Показать окрестности, местные магазины',
-      dateTime: dayjs('2024-09-13T10:00'),
-    },
-  ]);
+  // Use Firestore hook for persistent data
+  const { 
+    data: events, 
+    loading: eventsLoading, 
+    error: eventsError,
+    addDocument: addEvent,
+    updateDocument: updateEvent,
+    deleteDocument: deleteEvent
+  } = useItinerary();
 
   const [open, setOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -150,6 +141,34 @@ function Itinerary() {
     dateTime: dayjs(),
   });
 
+  // Initialize with sample data if database is empty
+  useEffect(() => {
+    if (!eventsLoading && events.length === 0) {
+      const sampleEvents = [
+        {
+          title: 'Прилёт мамы',
+          description: 'Встреча в аэропорту, поездка домой',
+          date: '5-09-12T14:00',
+        },
+        {
+          title: 'Ужин дома',
+          description: 'Первый семейный ужин, знакомство с домом',
+          date: '2025-09-12T19:00',
+        },
+        {
+          title: 'Прогулка по городу',
+          description: 'Показать окрестности, местные магазины',
+          date: '2025-09-13T10:00',
+        },
+      ];
+
+      // Add sample data
+      sampleEvents.forEach(event => {
+        addEvent(event).catch(console.error);
+      });
+    }
+  }, [eventsLoading, events.length, addEvent]);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -157,16 +176,25 @@ function Itinerary() {
     })
   );
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = async (event) => {
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      setEvents((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
+      const oldIndex = events.findIndex((item) => item.id === active.id);
+      const newIndex = events.findIndex((item) => item.id === over.id);
+      
+      const reorderedEvents = arrayMove(events, oldIndex, newIndex);
+      
+      // Update order in Firestore
+      try {
+        await Promise.all(
+          reorderedEvents.map((event, index) =>
+            updateEvent(event.id, { order: index })
+          )
+        );
+      } catch (error) {
+        console.error('Error updating event order:', error);
+      }
     }
   };
 
@@ -185,33 +213,53 @@ function Itinerary() {
     setFormData({
       title: event.title,
       description: event.description,
-      dateTime: event.dateTime,
+      dateTime: dayjs(event.date || event.dateTime),
     });
     setOpen(true);
   };
 
-  const handleSave = () => {
-    if (editingEvent) {
-      setEvents(events.map(event =>
-        event.id === editingEvent.id
-          ? { ...event, ...formData }
-          : event
-      ));
-    } else {
-      const newEvent = {
-        id: Date.now().toString(),
-        ...formData,
+  const handleSave = async () => {
+    try {
+      console.log('Attempting to save event:', formData);
+      
+      if (!formData.title.trim()) {
+        alert('Пожалуйста, введите название события');
+        return;
+      }
+
+      const eventData = {
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        date: formData.dateTime.toDate().toISOString(),
       };
-      setEvents([...events, newEvent]);
+
+      if (editingEvent) {
+        // Update existing event
+        console.log('Updating event:', editingEvent.id, eventData);
+        await updateEvent(editingEvent.id, eventData);
+        console.log('Event updated successfully');
+      } else {
+        // Add new event
+        console.log('Adding new event:', eventData);
+        const newEventId = await addEvent(eventData);
+        console.log('Event added successfully with ID:', newEventId);
+      }
+      setOpen(false);
+    } catch (error) {
+      console.error('Error saving event:', error);
+      alert(`Ошибка при сохранении события: ${error.message}`);
     }
-    setOpen(false);
   };
 
-  const handleDelete = (id) => {
-    setEvents(events.filter(event => event.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await deleteEvent(id);
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    }
   };
 
-  const sortedEvents = [...events].sort((a, b) => dayjs(a.dateTime).diff(dayjs(b.dateTime)));
+  const sortedEvents = [...events].sort((a, b) => dayjs(a.date).diff(dayjs(b.date)));
 
   return (
     <Box sx={{ maxWidth: 1000, mx: 'auto' }}>
@@ -221,7 +269,7 @@ function Itinerary() {
             Расписание поездки 📅
           </Typography>
           <Typography variant="h6" sx={{ color: 'text.secondary' }}>
-            12-29 сентября 2024 • Планы и мероприятия
+            12-29 сентября 2025 • Планы и мероприятия
           </Typography>
         </Box>
         <Button
@@ -300,7 +348,7 @@ function Itinerary() {
                       }
                       secondary={
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          {dayjs(event.dateTime).format('DD MMM, HH:mm')}
+                          {dayjs(event.date).format('DD MMM, HH:mm')}
                         </Typography>
                       }
                     />

@@ -19,6 +19,7 @@ import {
   DialogActions,
   TextField,
   IconButton,
+  Paper,
 } from '@mui/material';
 import {
   Hotel as HotelIcon,
@@ -107,7 +108,290 @@ function Lodging() {
       </Box>
 
       <Grid container spacing={3}>
-        {/* Lodging Information */}
+        {/* Hotel Information */}
+        <Grid item xs={12}>
+          <Card sx={{ mb: 3 }}>
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
+                  <HotelIcon />
+                </Avatar>
+                <Typography variant="h5">Marriott Residence Inn Hartford Rocky Hill</Typography>
+              </Box>
+
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="h6" sx={{ color: 'secondary.main', mb: 2 }}>
+                      🏨 Информация об отеле
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 1 }}>
+                      <strong>Название:</strong> Residence Inn Hartford Rocky Hill
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 1 }}>
+                      <strong>Адрес:</strong> 680 Cromwell Ave, Rocky Hill, CT 06067
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 1 }}>
+                      <strong>Телефон:</strong> (860) 257-7500
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                      <strong>Тип номера:</strong> Studio 1 Queen Sofa Bed
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      <Chip label="Одобрено Алиной" color="primary" variant="outlined" />
+                      <Chip label="Одобрено Аспеном" color="secondary" variant="outlined" />
+                      <Chip label="Одобрено Эхо" color="primary" variant="outlined" />
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="h6" sx={{ color: 'secondary.main', mb: 2 }}>
+                      🛏️ Детали номера
+                    </Typography>
+                    <List dense>
+                      <ListItem sx={{ px: 0 }}>
+                        <ListItemText 
+                          primary="Спальные места" 
+                          secondary="1 Queen кровать + раскладной диван"
+                        />
+                      </ListItem>
+                      <ListItem sx={{ px: 0 }}>
+                        <ListItemText 
+                          primary="Площадь" 
+                          secondary="Студия (~350 кв. футов)"
+                        />
+                      </ListItem>
+                      <ListItem sx={{ px: 0 }}>
+                        <ListItemText 
+                          primary="Максимальная вместимость" 
+                          secondary="4 гостя"
+                        />
+                      </ListItem>
+                    </List>
+                  </Box>
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="h6" sx={{ color: 'secondary.main', mb: 2 }}>
+                      🏠 Удобства номера
+                    </Typography>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12} sm={6}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                          <KitchenIcon sx={{ color: 'success.main', mr: 1 }} />
+                          <Typography variant="body2">Полная кухня</Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                          <WifiIcon sx={{ color: 'success.main', mr: 1 }} />
+                          <Typography variant="body2">Бесплатный Wi-Fi</Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                          <TvIcon sx={{ color: 'success.main', mr: 1 }} />
+                          <Typography variant="body2">Smart TV</Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                          <LaundryIcon sx={{ color: 'success.main', mr: 1 }} />
+                          <Typography variant="body2">Прачечная</Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                          <LocationIcon sx={{ color: 'success.main', mr: 1 }} />
+                          <Typography variant="body2">15 минут езды от дома Алины</Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                          <Typography variant="body2" sx={{ ml: 3 }}>🐱 Проживание с замечательным котом по имени Эхо</Typography>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  </Box>
+
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="h6" sx={{ color: 'secondary.main', mb: 2 }}>
+                      🏨 Услуги отеля
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>• Бесплатный завтрак</Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>• Фитнес-центр</Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>• Бассейн</Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>• Место для костра (firepit)</Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>• Магазин закусок и напитков</Typography>
+                  </Box>
+
+                  <Box>
+                    <Typography variant="h6" sx={{ color: 'secondary.main', mb: 2 }}>
+                      📸 Фотографии номера
+                    </Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <Box 
+                          sx={{ 
+                            height: 150, 
+                            borderRadius: 2,
+                            overflow: 'hidden',
+                            position: 'relative'
+                          }}
+                        >
+                          <img
+                            src="/images/hotel-general-view.jpg.jpg"
+                            alt="Общий вид номера"
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover'
+                            }}
+                            onError={(e) => {
+                              e.target.src = "https://cache.marriott.com/content/dam/marriott-renditions/BDLRR/bdlrr-studio-queen-sofa-bed-0049-hor-clsc.jpg";
+                            }}
+                          />
+                          <Box 
+                            sx={{ 
+                              position: 'absolute',
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
+                              color: 'white',
+                              p: 1
+                            }}
+                          >
+                            <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
+                              Общий вид номера
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Box 
+                          sx={{ 
+                            height: 150, 
+                            borderRadius: 2,
+                            overflow: 'hidden',
+                            position: 'relative'
+                          }}
+                        >
+                          <img
+                            src="/images/hotel-kitchen.jpg.jpg"
+                            alt="Кухонная зона"
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover'
+                            }}
+                            onError={(e) => {
+                              e.target.src = "https://cache.marriott.com/content/dam/marriott-renditions/BDLRR/bdlrr-studio-kitchen-0051-hor-clsc.jpg";
+                            }}
+                          />
+                          <Box 
+                            sx={{ 
+                              position: 'absolute',
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
+                              color: 'white',
+                              p: 1
+                            }}
+                          >
+                            <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
+                              Кухонная зона
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Box 
+                          sx={{ 
+                            height: 150, 
+                            borderRadius: 2,
+                            overflow: 'hidden',
+                            position: 'relative'
+                          }}
+                        >
+                          <img
+                            src="/images/hotel-sofa-bed.jpg.jpg"
+                            alt="Место для проживания"
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover'
+                            }}
+                            onError={(e) => {
+                              e.target.src = "https://cache.marriott.com/content/dam/marriott-renditions/BDLRR/bdlrr-studio-queen-sofa-bed-0049-hor-clsc.jpg";
+                            }}
+                          />
+                          <Box 
+                            sx={{ 
+                              position: 'absolute',
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
+                              color: 'white',
+                              p: 1
+                            }}
+                          >
+                            <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
+                              Место для проживания
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Box 
+                          sx={{ 
+                            height: 150, 
+                            borderRadius: 2,
+                            overflow: 'hidden',
+                            position: 'relative'
+                          }}
+                        >
+                          <img
+                            src="/images/hotel-bathroom.jpg.jpg"
+                            alt="Ванная комната"
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover'
+                            }}
+                            onError={(e) => {
+                              e.target.src = "https://cache.marriott.com/content/dam/marriott-renditions/BDLRR/bdlrr-studio-bathroom-0052-hor-clsc.jpg";
+                            }}
+                          />
+                          <Box 
+                            sx={{ 
+                              position: 'absolute',
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
+                              color: 'white',
+                              p: 1
+                            }}
+                          >
+                            <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
+                              Ванная комната
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Home Lodging Information */}
         <Grid item xs={12} lg={6}>
           <Card sx={{ height: 'fit-content' }}>
             <CardContent sx={{ p: 3 }}>

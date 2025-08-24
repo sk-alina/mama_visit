@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -16,6 +16,12 @@ import {
   Avatar,
   Chip,
   Fab,
+  ImageList,
+  ImageListItem,
+  ImageListItemBar,
+  Alert,
+  LinearProgress,
+  CircularProgress,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -25,23 +31,28 @@ import {
   Photo as PhotoIcon,
   Favorite as FavoriteIcon,
   Place as PlaceIcon,
+  VideoLibrary as VideoIcon,
+  CameraAlt as CameraIcon,
+  CloudUpload as UploadIcon,
+  Close as CloseIcon,
+  PlayArrow as PlayIcon,
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
+import { useDiaryEntries } from '../hooks/useFirestore';
 
 function Diary() {
-  const [entries, setEntries] = useState([
-    {
-      id: '1',
-      date: dayjs('2024-09-12'),
-      title: 'Первый день в Америке! (Пробнвый пост)',
-      location: 'Berlin, CT',
-      content: 'Наконец-то я здесь! Полёт был долгим, но дочка встретила меня в аэропорту. Дом очень уютный и красивый',
-      mood: 'Счастливая',
-      photos: [],
-      favorite: true,
-    },
-  ]);
+  const fileInputRef = useRef(null);
+  
+  // Use Firestore hook for persistent data
+  const { 
+    data: entries, 
+    loading: entriesLoading, 
+    error: entriesError,
+    addDocument: addEntry,
+    updateDocument: updateEntry,
+    deleteDocument: deleteEntry
+  } = useDiaryEntries();
 
   const [open, setOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState(null);
@@ -51,7 +62,30 @@ function Diary() {
     location: '',
     content: '',
     mood: '',
+    photos: [],
+    videos: [],
   });
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  // Initialize with sample data if database is empty
+  useEffect(() => {
+    if (!entriesLoading && entries.length === 0) {
+      const sampleEntry = {
+        date: '2025-09-12',
+        title: 'Первый день в Америке! (Пробнвый пост)',
+        location: 'Berlin, CT',
+        content: 'Наконец-то я здесь! Полёт был долгим, но дочка встретила меня в аэропорту. Дом очень уютный и красивый',
+        mood: 'Счастливая',
+        photos: [],
+        videos: [],
+        favorite: true,
+      };
+      addEntry(sampleEntry).catch(console.error);
+    }
+  }, [entriesLoading, entries.length, addEntry]);
 
   const moods = [
     'Счастливая', 'Восхищённая', 'Благодарная', 'Взволнованная', 
@@ -66,51 +100,158 @@ function Diary() {
       location: '',
       content: '',
       mood: '',
+      photos: [],
+      videos: [],
     });
+    setUploadError('');
     setOpen(true);
   };
 
   const handleEdit = (entry) => {
     setEditingEntry(entry);
     setFormData({
-      date: entry.date,
+      date: dayjs(entry.date),
       title: entry.title,
       location: entry.location,
       content: entry.content,
       mood: entry.mood,
+      photos: entry.photos || [],
+      videos: entry.videos || [],
     });
+    setUploadError('');
     setOpen(true);
   };
 
-  const handleSave = () => {
-    if (editingEntry) {
-      setEntries(entries.map(entry =>
-        entry.id === editingEntry.id
-          ? { ...entry, ...formData }
-          : entry
-      ));
-    } else {
-      const newEntry = {
-        id: Date.now().toString(),
-        ...formData,
-        photos: [],
-        favorite: false,
-      };
-      setEntries([newEntry, ...entries]);
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      if (editingEntry) {
+        // Update existing entry
+        await updateEntry(editingEntry.id, {
+          ...formData,
+          date: formData.date.format('YYYY-MM-DD'),
+        });
+      } else {
+        // Add new entry
+        await addEntry({
+          ...formData,
+          date: formData.date.format('YYYY-MM-DD'),
+          favorite: false,
+        });
+      }
+      setOpen(false);
+    } catch (error) {
+      console.error('Error saving entry:', error);
+      setUploadError('Ошибка при сохранении записи');
+    } finally {
+      setSaving(false);
     }
-    setOpen(false);
   };
 
-  const handleDelete = (id) => {
-    setEntries(entries.filter(entry => entry.id !== id));
+  // File upload functions
+  const handleFileSelect = (event) => {
+    const files = Array.from(event.target.files);
+    handleFiles(files);
   };
 
-  const toggleFavorite = (id) => {
-    setEntries(entries.map(entry =>
-      entry.id === id
-        ? { ...entry, favorite: !entry.favorite }
-        : entry
-    ));
+  const handleFiles = async (files) => {
+    setUploadError('');
+    setUploading(true);
+    setUploadProgress(0);
+
+    const validFiles = [];
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    const imageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    const videoTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/webm', 'video/quicktime'];
+
+    for (const file of files) {
+      if (file.size > maxSize) {
+        setUploadError(`Файл "${file.name}" слишком большой. Максимальный размер: 50MB`);
+        continue;
+      }
+
+      if (![...imageTypes, ...videoTypes].includes(file.type)) {
+        setUploadError(`Неподдерживаемый формат файла: ${file.name}`);
+        continue;
+      }
+
+      validFiles.push(file);
+    }
+
+    if (validFiles.length === 0) {
+      setUploading(false);
+      return;
+    }
+
+    try {
+      const processedFiles = await Promise.all(
+        validFiles.map(async (file, index) => {
+          // Simulate upload progress
+          setUploadProgress(((index + 1) / validFiles.length) * 100);
+
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const fileData = {
+                id: Date.now() + index,
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                url: e.target.result,
+                isVideo: videoTypes.includes(file.type),
+              };
+              resolve(fileData);
+            };
+            reader.readAsDataURL(file);
+          });
+        })
+      );
+
+      const photos = processedFiles.filter(f => !f.isVideo);
+      const videos = processedFiles.filter(f => f.isVideo);
+
+      setFormData(prev => ({
+        ...prev,
+        photos: [...prev.photos, ...photos],
+        videos: [...prev.videos, ...videos],
+      }));
+
+    } catch (error) {
+      setUploadError('Ошибка при загрузке файлов');
+    } finally {
+      setUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const removeMedia = (id, type) => {
+    setFormData(prev => ({
+      ...prev,
+      [type]: prev[type].filter(item => item.id !== id),
+    }));
+  };
+
+  const openFileDialog = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteEntry(id);
+    } catch (error) {
+      console.error('Error deleting entry:', error);
+    }
+  };
+
+  const toggleFavorite = async (id) => {
+    try {
+      const entry = entries.find(e => e.id === id);
+      if (entry) {
+        await updateEntry(id, { favorite: !entry.favorite });
+      }
+    } catch (error) {
+      console.error('Error updating favorite:', error);
+    }
   };
 
   const sortedEntries = [...entries].sort((a, b) => dayjs(b.date).diff(dayjs(a.date)));
@@ -264,12 +405,83 @@ function Diary() {
                     {entry.content}
                   </Typography>
 
-                  {entry.photos && entry.photos.length > 0 && (
-                    <Box sx={{ mt: 2 }}>
-                      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
-                        📷 Фотографии ({entry.photos.length})
+                  {/* Media Gallery */}
+                  {((entry.photos && entry.photos.length > 0) || (entry.videos && entry.videos.length > 0)) && (
+                    <Box sx={{ mt: 3 }}>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+                        📷 Медиа ({(entry.photos?.length || 0) + (entry.videos?.length || 0)})
                       </Typography>
-                      {/* Photo gallery would go here */}
+                      
+                      <ImageList cols={3} rowHeight={160} gap={8}>
+                        {/* Photos */}
+                        {entry.photos?.map((photo) => (
+                          <ImageListItem key={photo.id}>
+                            <img
+                              src={photo.url}
+                              alt={photo.name}
+                              style={{
+                                width: '100%',
+                                height: '160px',
+                                objectFit: 'cover',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                              }}
+                              onClick={() => window.open(photo.url, '_blank')}
+                            />
+                          </ImageListItem>
+                        ))}
+                        
+                        {/* Videos */}
+                        {entry.videos?.map((video) => (
+                          <ImageListItem key={video.id}>
+                            <Box
+                              sx={{
+                                position: 'relative',
+                                width: '100%',
+                                height: '160px',
+                                backgroundColor: 'black',
+                                borderRadius: '8px',
+                                overflow: 'hidden',
+                                cursor: 'pointer',
+                              }}
+                              onClick={() => window.open(video.url, '_blank')}
+                            >
+                              <video
+                                src={video.url}
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover',
+                                }}
+                              />
+                              <Box
+                                sx={{
+                                  position: 'absolute',
+                                  top: '50%',
+                                  left: '50%',
+                                  transform: 'translate(-50%, -50%)',
+                                  color: 'white',
+                                  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                  borderRadius: '50%',
+                                  p: 1.5,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                <PlayIcon sx={{ fontSize: 30 }} />
+                              </Box>
+                            </Box>
+                            <ImageListItemBar
+                              title={video.name}
+                              subtitle="Видео"
+                              sx={{
+                                background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+                              }}
+                            />
+                          </ImageListItem>
+                        ))}
+                      </ImageList>
                     </Box>
                   )}
                 </CardContent>
@@ -354,6 +566,165 @@ function Diary() {
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                   placeholder="Расскажите о своих впечатлениях, эмоциях, интересных моментах дня..."
                 />
+              </Grid>
+
+              {/* Media Upload Section */}
+              <Grid item xs={12}>
+                <Typography variant="h6" sx={{ mb: 2, color: 'primary.main' }}>
+                  📸 Фото и видео
+                </Typography>
+                
+                {/* Upload Buttons */}
+                <Box sx={{ mb: 2 }}>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileSelect}
+                    multiple
+                    accept="image/*,video/*"
+                    style={{ display: 'none' }}
+                    capture="environment" // Mobile camera
+                  />
+                  
+                  <Grid container spacing={1}>
+                    <Grid item xs={12} sm={4}>
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        startIcon={<CameraIcon />}
+                        onClick={openFileDialog}
+                        sx={{ py: 1.5 }}
+                      >
+                        Камера
+                      </Button>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        startIcon={<PhotoIcon />}
+                        onClick={openFileDialog}
+                        sx={{ py: 1.5 }}
+                      >
+                        Галерея
+                      </Button>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        startIcon={<UploadIcon />}
+                        onClick={openFileDialog}
+                        sx={{ py: 1.5 }}
+                      >
+                        Загрузить
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </Box>
+
+                {/* Upload Progress */}
+                {uploading && (
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      Загрузка файлов... {Math.round(uploadProgress)}%
+                    </Typography>
+                    <LinearProgress variant="determinate" value={uploadProgress} />
+                  </Box>
+                )}
+
+                {/* Upload Error */}
+                {uploadError && (
+                  <Alert severity="error" sx={{ mb: 2 }}>
+                    {uploadError}
+                  </Alert>
+                )}
+
+                {/* Media Preview */}
+                {(formData.photos.length > 0 || formData.videos.length > 0) && (
+                  <Box>
+                    <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                      Загруженные файлы ({formData.photos.length + formData.videos.length})
+                    </Typography>
+                    
+                    <ImageList cols={3} rowHeight={120} gap={8}>
+                      {/* Photos */}
+                      {formData.photos.map((photo) => (
+                        <ImageListItem key={photo.id}>
+                          <img
+                            src={photo.url}
+                            alt={photo.name}
+                            style={{
+                              width: '100%',
+                              height: '120px',
+                              objectFit: 'cover',
+                              borderRadius: '8px',
+                            }}
+                          />
+                          <ImageListItemBar
+                            actionIcon={
+                              <IconButton
+                                sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
+                                onClick={() => removeMedia(photo.id, 'photos')}
+                              >
+                                <CloseIcon />
+                              </IconButton>
+                            }
+                          />
+                        </ImageListItem>
+                      ))}
+                      
+                      {/* Videos */}
+                      {formData.videos.map((video) => (
+                        <ImageListItem key={video.id}>
+                          <Box
+                            sx={{
+                              position: 'relative',
+                              width: '100%',
+                              height: '120px',
+                              backgroundColor: 'black',
+                              borderRadius: '8px',
+                              overflow: 'hidden',
+                            }}
+                          >
+                            <video
+                              src={video.url}
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                              }}
+                            />
+                            <Box
+                              sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                color: 'white',
+                                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                                borderRadius: '50%',
+                                p: 1,
+                              }}
+                            >
+                              <PlayIcon />
+                            </Box>
+                          </Box>
+                          <ImageListItemBar
+                            actionIcon={
+                              <IconButton
+                                sx={{ color: 'rgba(255, 255, 255, 0.8)' }}
+                                onClick={() => removeMedia(video.id, 'videos')}
+                              >
+                                <CloseIcon />
+                              </IconButton>
+                            }
+                          />
+                        </ImageListItem>
+                      ))}
+                    </ImageList>
+                  </Box>
+                )}
               </Grid>
             </Grid>
           </Box>
