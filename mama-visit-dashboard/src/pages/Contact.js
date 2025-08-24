@@ -224,6 +224,31 @@ function Contact() {
                 <Typography variant="h5">Основные контакты</Typography>
               </Box>
 
+              {/* Heart-shaped frame photo */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                <Box 
+                  sx={{ 
+                    width: 200, 
+                    height: 200, 
+                    borderRadius: '50%',
+                    overflow: 'hidden',
+                    border: '4px solid',
+                    borderColor: 'primary.main',
+                    boxShadow: 3
+                  }}
+                >
+                  <img
+                    src="/images/Alina and Aspen.jpg"
+                    alt="Алина и Аспен"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                </Box>
+              </Box>
+
               <List>
                 {mainContacts.map((contact, index) => (
                   <React.Fragment key={contact.id}>
@@ -401,7 +426,7 @@ function Contact() {
                 <Grid item xs={12} md={4}>
                   <Paper sx={{ p: 2, backgroundColor: 'primary.light', color: 'white' }}>
                     <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
-                      🏠 Je ne mange pas six jours
+                      🍽️ Je ne mange pas six jours
                     </Typography>
                     <Typography variant="body2">
                       Еду всегда можно заказать на Doordash, Uber Eats or Instacart (продукты).
@@ -411,7 +436,7 @@ function Contact() {
                 <Grid item xs={12} md={4}>
                   <Paper sx={{ p: 2, backgroundColor: 'secondary.light', color: 'white' }}>
                     <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
-                      📱 AllTrails
+                      🥾 AllTrails
                     </Typography>
                     <Typography variant="body2">
                       Приложение для поиска и навигации по пешеходным маршрутам. В Коннектикуте много красивых мест!
@@ -421,7 +446,7 @@ function Contact() {
                 <Grid item xs={12} md={4}>
                   <Paper sx={{ p: 2, backgroundColor: 'warning.main', color: 'white' }}>
                     <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
-                      🚨 Кошки и коты
+                      🐱 Кошки и коты
                     </Typography>
                     <Typography variant="body2">
                       Эхо будет жить с тобой. Пожалуйста, кормите его, люби и балуй! На улицу только с поводком. Свежую воду каждый день.Туалет у него роботизированный, еда и вода - тоже.
