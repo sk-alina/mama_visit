@@ -12,6 +12,11 @@ import {
   Alert,
   LinearProgress,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
 } from '@mui/material';
 import {
   Favorite as FavoriteIcon,
@@ -43,6 +48,10 @@ function Home() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState('');
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [showVideoDialog, setShowVideoDialog] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [videoTitle, setVideoTitle] = useState('');
+  const [videoComment, setVideoComment] = useState('');
   
   // Get the current welcome video (there should only be one)
   const welcomeVideo = welcomeVideos.length > 0 ? welcomeVideos[0] : null;
@@ -84,25 +93,31 @@ function Home() {
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
-      handleVideoUpload(file);
+      setSelectedFile(file);
+      setVideoTitle('');
+      setVideoComment('');
+      setShowVideoDialog(true);
     }
   };
 
-  const handleVideoUpload = async (file) => {
+  const handleVideoUpload = async () => {
+    if (!selectedFile) return;
+
     setUploadError('');
     setUploading(true);
     setUploadProgress(0);
+    setShowVideoDialog(false);
 
     const maxSize = 100 * 1024 * 1024; // 100MB for welcome video
     const videoTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/webm', 'video/quicktime'];
 
-    if (file.size > maxSize) {
+    if (selectedFile.size > maxSize) {
       setUploadError(`Файл слишком большой. Максимальный размер: 100MB`);
       setUploading(false);
       return;
     }
 
-    if (!videoTypes.includes(file.type)) {
+    if (!videoTypes.includes(selectedFile.type)) {
       setUploadError(`Неподдерживаемый формат видео. Поддерживаются: MP4, MOV, AVI, WebM`);
       setUploading(false);
       return;
@@ -124,11 +139,13 @@ function Home() {
       reader.onload = async (e) => {
         try {
           const videoData = {
-            name: file.name,
-            type: file.type,
-            size: file.size,
+            name: selectedFile.name,
+            type: selectedFile.type,
+            size: selectedFile.size,
             url: e.target.result,
             uploadDate: new Date().toISOString(),
+            title: videoTitle || `💕 ${selectedFile.name}`,
+            comment: videoComment || 'Специальное видео-сообщение',
           };
           
           // If there's already a video, update it; otherwise, add new one
@@ -142,6 +159,9 @@ function Home() {
           setTimeout(() => {
             setUploading(false);
             setUploadProgress(0);
+            setSelectedFile(null);
+            setVideoTitle('');
+            setVideoComment('');
           }, 500);
         } catch (error) {
           console.error('Error saving video to Firebase:', error);
@@ -151,7 +171,7 @@ function Home() {
         }
       };
       
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(selectedFile);
     } catch (error) {
       setUploadError('Ошибка при загрузке видео');
       setUploading(false);
@@ -173,6 +193,13 @@ function Home() {
 
   const openFileDialog = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleDialogClose = () => {
+    setShowVideoDialog(false);
+    setSelectedFile(null);
+    setVideoTitle('');
+    setVideoComment('');
   };
 
   return (
@@ -338,22 +365,27 @@ function Home() {
                   </Paper>
                   
                   {/* Video Info and Controls */}
-                  <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Box>
-                      <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                        {welcomeVideo.name}
+                  <Box sx={{ mt: 2 }}>
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                        {welcomeVideo.title || welcomeVideo.name}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
+                        {welcomeVideo.comment || 'Специальное видео-сообщение'}
                       </Typography>
                       <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         Размер: {(welcomeVideo.size / (1024 * 1024)).toFixed(1)} MB
                       </Typography>
                     </Box>
-                    <IconButton 
-                      onClick={removeVideo} 
-                      color="error"
-                      sx={{ ml: 2 }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <IconButton 
+                        onClick={removeVideo} 
+                        color="error"
+                        size="small"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
                   </Box>
                 </Box>
               ) : (
@@ -516,6 +548,56 @@ function Home() {
           </Card>
         </Grid>
       </Grid>
+
+      {/* Video Upload Dialog */}
+      <Dialog open={showVideoDialog} onClose={handleDialogClose} maxWidth="sm" fullWidth>
+        <DialogTitle>Добавить видео-сообщение</DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 2 }}>
+            <Typography variant="body2" sx={{ mb: 3, color: 'text.secondary' }}>
+              Добавьте заголовок и комментарий к вашему видео
+            </Typography>
+            
+            <TextField
+              fullWidth
+              label="Заголовок видео"
+              placeholder="💕 Приветственное видео от Алины и Аспена"
+              value={videoTitle}
+              onChange={(e) => setVideoTitle(e.target.value)}
+              sx={{ mb: 2 }}
+              helperText="Например: 💕 Видео-сообщение для мамы"
+            />
+            
+            <TextField
+              fullWidth
+              label="Комментарий"
+              placeholder="Специальное сообщение для мамы"
+              value={videoComment}
+              onChange={(e) => setVideoComment(e.target.value)}
+              multiline
+              rows={3}
+              helperText="Добавьте описание или особое сообщение"
+            />
+            
+            {selectedFile && (
+              <Box sx={{ mt: 2, p: 2, backgroundColor: 'grey.50', borderRadius: 1 }}>
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                  Выбранный файл:
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  {selectedFile.name} ({(selectedFile.size / (1024 * 1024)).toFixed(1)} MB)
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Отмена</Button>
+          <Button onClick={handleVideoUpload} variant="contained">
+            Загрузить видео
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
