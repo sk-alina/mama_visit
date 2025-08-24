@@ -35,49 +35,15 @@ import {
   Place as PlaceIcon,
   DragIndicator as DragIcon,
 } from '@mui/icons-material';
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import {
-  useSortable,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { useWishlist } from '../hooks/useFirestore';
 
-// Sortable Item Component
-function SortableItem({ id, item, onEdit, onDelete, onToggleComplete, type }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
+// Simple List Item Component
+function ListItem({ item, onEdit, onDelete, onToggleComplete, type }) {
   return (
     <Paper
-      ref={setNodeRef}
-      style={style}
       sx={{
         mb: 2,
         p: 2,
-        cursor: 'grab',
         opacity: item.completed ? 0.6 : 1,
         '&:hover': {
           boxShadow: 3,
@@ -85,10 +51,6 @@ function SortableItem({ id, item, onEdit, onDelete, onToggleComplete, type }) {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <IconButton {...attributes} {...listeners} sx={{ mr: 2 }}>
-          <DragIcon />
-        </IconButton>
-        
         <Checkbox
           checked={item.completed}
           onChange={() => onToggleComplete(item.id)}
@@ -247,35 +209,6 @@ function Wishlist() {
     }
   }, [wishlistLoading, wishlistData.length, addWishlistItem]);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = async (event) => {
-    const { active, over } = event;
-
-    if (active.id !== over.id) {
-      const items = currentType === 'wishlist' ? wishlistItems : shoppingItems;
-      const oldIndex = items.findIndex((item) => item.id === active.id);
-      const newIndex = items.findIndex((item) => item.id === over.id);
-      
-      const reorderedItems = arrayMove(items, oldIndex, newIndex);
-      
-      // Update order in Firestore
-      try {
-        await Promise.all(
-          reorderedItems.map((item, index) =>
-            updateWishlistItem(item.id, { order: index })
-          )
-        );
-      } catch (error) {
-        console.error('Error updating item order:', error);
-      }
-    }
-  };
 
   const handleAdd = (type) => {
     setCurrentType(type);
@@ -358,38 +291,77 @@ function Wishlist() {
 
       {/* Featured Drink Section */}
       <Card sx={{ mb: 4, background: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%)' }}>
-        <CardContent sx={{ p: 3, textAlign: 'center' }}>
-          <Typography variant="h5" sx={{ color: 'white', mb: 2 }}>
-            🥤 Особенный напиток
-          </Typography>
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            mb: 2 
-          }}>
+        <CardContent sx={{ p: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+            {/* Drink Image - Left Side */}
             <Box
               sx={{
-                width: '200px',
-                height: '150px',
-                borderRadius: '12px',
-                overflow: 'hidden',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+                position: 'relative',
+                width: '180px',
+                height: '140px',
+                background: 'linear-gradient(45deg, #FFD700, #FFA500, #FFD700)',
+                borderRadius: '20px',
+                padding: '8px',
+                boxShadow: '0 12px 40px rgba(0, 0, 0, 0.3)',
+                flexShrink: 0,
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: '-4px',
+                  left: '-4px',
+                  right: '-4px',
+                  bottom: '-4px',
+                  background: 'linear-gradient(45deg, #FF6B9D, #C44569, #F8B500, #FF6B9D)',
+                  borderRadius: '24px',
+                  zIndex: -1,
+                  animation: 'shimmer 3s ease-in-out infinite',
+                },
+                '@keyframes shimmer': {
+                  '0%, 100%': { opacity: 0.8 },
+                  '50%': { opacity: 1 },
+                },
               }}
             >
-              <img
-                src="/images/drink.jpg"
-                alt="Special drink"
-                style={{
+              <Box
+                sx={{
                   width: '100%',
                   height: '100%',
-                  objectFit: 'cover',
+                  borderRadius: '15px',
+                  overflow: 'hidden',
+                  border: '3px solid rgba(255, 255, 255, 0.8)',
+                  boxShadow: 'inset 0 4px 8px rgba(0, 0, 0, 0.1)',
                 }}
-              />
+              >
+                <img
+                  src="/images/drink.jpg"
+                  alt="Special drink"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </Box>
+              {/* Decorative corners */}
+              <Box sx={{ position: 'absolute', top: '4px', left: '4px', fontSize: '14px' }}>✨</Box>
+              <Box sx={{ position: 'absolute', top: '4px', right: '4px', fontSize: '14px' }}>✨</Box>
+              <Box sx={{ position: 'absolute', bottom: '4px', left: '4px', fontSize: '14px' }}>✨</Box>
+              <Box sx={{ position: 'absolute', bottom: '4px', right: '4px', fontSize: '14px' }}>✨</Box>
+            </Box>
+
+            {/* Text Content - Right Side */}
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="h5" sx={{ color: 'white', mb: 2 }}>
+                🥤 Все самое необходимое
+              </Typography>
+              <Typography variant="body1" sx={{ color: 'rgba(255, 255, 255, 0.9)', mb: 1 }}>
+                Все, что обязательно нужно попробовать! 🌟
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)', fontStyle: 'italic' }}>
+                Все, чего требует душа 💕
+              </Typography>
             </Box>
           </Box>
-          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-            Напиток, который обязательно нужно попробовать! 🌟
-          </Typography>
         </CardContent>
       </Card>
 
@@ -474,28 +446,16 @@ function Wishlist() {
                 </Button>
               </Box>
 
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={currentItems.map(item => item.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  {currentItems.map((item) => (
-                    <SortableItem
-                      key={item.id}
-                      id={item.id}
-                      item={item}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
-                      onToggleComplete={handleToggleComplete}
-                      type={tabValue === 0 ? 'wishlist' : 'shopping'}
-                    />
-                  ))}
-                </SortableContext>
-              </DndContext>
+              {currentItems.map((item) => (
+                <ListItem
+                  key={item.id}
+                  item={item}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onToggleComplete={handleToggleComplete}
+                  type={tabValue === 0 ? 'wishlist' : 'shopping'}
+                />
+              ))}
 
               {currentItems.length === 0 && (
                 <Paper sx={{ p: 4, textAlign: 'center', backgroundColor: 'grey.50' }}>

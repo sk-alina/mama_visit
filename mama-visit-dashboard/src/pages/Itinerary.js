@@ -418,17 +418,62 @@ function Itinerary() {
                 justifyContent: 'center', 
                 mb: 2 
               }}>
-                <img
-                  src="/images/echo.png"
-                  alt="Echo the cat"
-                  style={{
-                    width: '150px',
-                    height: '150px',
-                    objectFit: 'cover',
+                <Box
+                  sx={{
+                    position: 'relative',
+                    width: '180px',
+                    height: '180px',
+                    background: 'linear-gradient(45deg, #FFB6C1, #FFC0CB, #FFE4E1, #FFB6C1)',
                     borderRadius: '50%',
-                    border: '3px solid #e0e0e0',
+                    padding: '12px',
+                    boxShadow: '0 8px 32px rgba(255, 182, 193, 0.4)',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: '-6px',
+                      left: '-6px',
+                      right: '-6px',
+                      bottom: '-6px',
+                      background: 'linear-gradient(45deg, #FF69B4, #FFB6C1, #FFC0CB, #FF69B4)',
+                      borderRadius: '50%',
+                      zIndex: -1,
+                      animation: 'sparkle 2s ease-in-out infinite',
+                    },
+                    '@keyframes sparkle': {
+                      '0%, 100%': { opacity: 0.7 },
+                      '50%': { opacity: 1 },
+                    },
                   }}
-                />
+                >
+                  <Box
+                    sx={{
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      border: '4px solid rgba(255, 255, 255, 0.9)',
+                      boxShadow: 'inset 0 4px 8px rgba(0, 0, 0, 0.1)',
+                      position: 'relative',
+                    }}
+                  >
+                    <img
+                      src="/images/echo.png"
+                      alt="Echo the cat"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </Box>
+                  {/* Decorative hearts around the frame */}
+                  <Box sx={{ position: 'absolute', top: '8px', left: '20px', fontSize: '16px', color: '#FF69B4' }}>💕</Box>
+                  <Box sx={{ position: 'absolute', top: '20px', right: '8px', fontSize: '14px', color: '#FFB6C1' }}>🌸</Box>
+                  <Box sx={{ position: 'absolute', bottom: '8px', left: '15px', fontSize: '14px', color: '#FFC0CB' }}>✨</Box>
+                  <Box sx={{ position: 'absolute', bottom: '20px', right: '12px', fontSize: '16px', color: '#FF69B4' }}>💖</Box>
+                  <Box sx={{ position: 'absolute', top: '50%', left: '2px', fontSize: '12px', color: '#FFB6C1' }}>🎀</Box>
+                  <Box sx={{ position: 'absolute', top: '50%', right: '2px', fontSize: '12px', color: '#FFC0CB' }}>🌺</Box>
+                </Box>
               </Box>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 Наш любимый котик Эхо с нетерпением ждёт знакомства! 💕

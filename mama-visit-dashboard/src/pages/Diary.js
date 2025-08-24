@@ -285,7 +285,7 @@ function Diary() {
       <Card sx={{ mb: 4, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
         <CardContent sx={{ p: 3, textAlign: 'center' }}>
           <Typography variant="h5" sx={{ color: 'white', mb: 2 }}>
-            👨‍👩‍👧‍👦 Наше кредо
+            🌈 Наше кредо
           </Typography>
           <Box sx={{ 
             display: 'flex', 
