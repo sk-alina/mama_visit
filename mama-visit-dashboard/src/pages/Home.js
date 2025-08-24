@@ -183,7 +183,7 @@ function Home() {
           Добро пожаловать, мамочка! 💕
         </Typography>
         <Typography variant="h5" sx={{ color: 'text.secondary', mb: 3 }}>
-          Мы так рады, что ты приехала к нам в гости!
+          Мы так рады, что ты приехала
         </Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap', mb: 3 }}>
           <Chip 
@@ -273,7 +273,7 @@ function Home() {
                   <FavoriteIcon />
                 </Avatar>
                 <Typography variant="h4" sx={{ color: 'primary.main' }}>
-                  Видео-сообщение для мамы
+                  Видео-сообщение
                 </Typography>
               </Box>
               
@@ -357,61 +357,96 @@ function Home() {
                   </Box>
                 </Box>
               ) : (
-                <Paper 
-                  onClick={openFileDialog}
-                  sx={{ 
-                    height: 300, 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    backgroundColor: 'grey.100',
-                    border: '2px dashed',
-                    borderColor: 'primary.light',
-                    borderRadius: 2,
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      backgroundColor: 'primary.light',
-                      borderColor: 'primary.main',
-                    }
-                  }}
-                >
-                  <Box sx={{ textAlign: 'center', p: 3 }}>
-                    <VideoIcon sx={{ fontSize: 60, color: 'primary.main', mb: 2 }} />
-                    <Typography variant="h6" sx={{ color: 'primary.main', mb: 2 }}>
-                      📹 Место для видео-сообщения
+                <Box>
+                  {/* Default Hello Video */}
+                  <Paper 
+                    sx={{ 
+                      height: 300, 
+                      backgroundColor: 'black',
+                      borderRadius: 2,
+                      overflow: 'hidden',
+                      position: 'relative',
+                      mb: 2
+                    }}
+                  >
+                    <video
+                      src="/images/hello.mp4"
+                      controls
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                      }}
+                    />
+                  </Paper>
+                  
+                  {/* Video Info */}
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                      💕 Приветственное видео от Алины и Аспена
                     </Typography>
-                    <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
-                      Здесь будет специальное видео-сообщение для мамы
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                      Специальное сообщение для мамы
                     </Typography>
-                    
-                    {/* Upload Buttons */}
-                    <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', flexWrap: 'wrap' }}>
-                      <Button
-                        variant="contained"
-                        startIcon={<CameraIcon />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openFileDialog();
-                        }}
-                        size="small"
-                      >
-                        Камера
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        startIcon={<UploadIcon />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openFileDialog();
-                        }}
-                        size="small"
-                      >
-                        Загрузить
-                      </Button>
-                    </Box>
                   </Box>
-                </Paper>
+
+                  {/* Upload New Video Section */}
+                  <Paper 
+                    onClick={openFileDialog}
+                    sx={{ 
+                      height: 200, 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      backgroundColor: 'grey.100',
+                      border: '2px dashed',
+                      borderColor: 'primary.light',
+                      borderRadius: 2,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        backgroundColor: 'primary.light',
+                        borderColor: 'primary.main',
+                      }
+                    }}
+                  >
+                    <Box sx={{ textAlign: 'center', p: 3 }}>
+                      <VideoIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
+                      <Typography variant="body1" sx={{ color: 'primary.main', mb: 1 }}>
+                        📹 Загрузить новое видео
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+                        Заменить приветственное видео
+                      </Typography>
+                      
+                      {/* Upload Buttons */}
+                      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <Button
+                          variant="contained"
+                          startIcon={<CameraIcon />}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openFileDialog();
+                          }}
+                          size="small"
+                        >
+                          Камера
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          startIcon={<UploadIcon />}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openFileDialog();
+                          }}
+                          size="small"
+                        >
+                          Загрузить
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Paper>
+                </Box>
               )}
             </CardContent>
           </Card>
