@@ -13,7 +13,6 @@ import {
   IconButton,
   Grid,
   Paper,
-  Chip,
   Fab,
   Alert,
   LinearProgress,
@@ -27,9 +26,6 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
   PhotoCamera as CameraIcon,
-  CloudUpload as UploadIcon,
-  Close as CloseIcon,
-  Luggage as LuggageIcon,
 } from '@mui/icons-material';
 import {
   DndContext,
@@ -39,9 +35,9 @@ import {
   useSensor,
   useSensors,
   DragOverlay,
+  useDroppable,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   rectSortingStrategy,
@@ -106,14 +102,6 @@ function SortableItem({ id, item, onEdit, onDelete, onStatusChange, category }) 
       case 'yes': return '#4CAF50';
       case 'no': return '#F44336';
       default: return '#FF9800';
-    }
-  };
-
-  const getStatusLabel = (status) => {
-    switch (status) {
-      case 'yes': return 'Беру ✅';
-      case 'no': return 'Не беру ❌';
-      default: return 'Не решила 🤔';
     }
   };
 
@@ -279,15 +267,22 @@ function SortableItem({ id, item, onEdit, onDelete, onStatusChange, category }) 
 
 // Droppable Area Component
 function DroppableArea({ id, title, items, children, color }) {
+  const { isOver, setNodeRef } = useDroppable({
+    id: id,
+  });
+
   return (
     <Box
+      ref={setNodeRef}
       sx={{
         minHeight: '400px',
         p: 2,
         borderRadius: 3,
         border: `3px dashed ${color}`,
-        backgroundColor: `${color}10`,
+        backgroundColor: isOver ? `${color}20` : `${color}10`,
         position: 'relative',
+        transition: 'background-color 0.2s ease',
+        transform: isOver ? 'scale(1.02)' : 'scale(1)',
       }}
     >
       <Typography
@@ -324,8 +319,8 @@ function DroppableArea({ id, title, items, children, color }) {
             color: 'text.secondary',
           }}
         >
-          <Typography variant="h6" sx={{ opacity: 0.5 }}>
-            Перетащите сюда предметы
+          <Typography variant="h6" sx={{ opacity: isOver ? 0.8 : 0.5 }}>
+            {isOver ? 'Отпустите здесь!' : 'Перетащите сюда предметы'}
           </Typography>
         </Box>
       )}
