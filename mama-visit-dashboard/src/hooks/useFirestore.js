@@ -133,3 +133,8 @@ export const useWishlist = () => {
 export const useAddressInfo = () => {
   return useFirestore('addressInfo');
 };
+
+// Specific hook for packing items
+export const usePackingItems = () => {
+  return useFirestore('packingItems');
+};

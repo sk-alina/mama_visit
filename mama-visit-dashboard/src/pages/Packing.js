@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { usePackingItems } from '../hooks/useFirestore';
 import {
   Box,
   Typography,
@@ -49,6 +50,8 @@ import { CSS } from '@dnd-kit/utilities';
 
 // Sortable Item Component with cute frames
 function SortableItem({ id, item, onEdit, onDelete, onStatusChange, category }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
   const {
     attributes,
     listeners,
@@ -109,16 +112,17 @@ function SortableItem({ id, item, onEdit, onDelete, onStatusChange, category }) 
     <Paper
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
+      onClick={() => setIsExpanded(!isExpanded)}
       sx={{
         position: 'relative',
         width: '280px',
-        height: '320px',
-        cursor: isDragging ? 'grabbing' : 'grab',
+        height: isExpanded ? '320px' : '80px',
+        cursor: 'pointer',
         borderRadius: '20px',
         padding: '12px',
         ...getFrameStyle(category),
+        transition: 'height 0.3s ease, transform 0.3s ease',
+        overflow: 'hidden',
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -140,208 +144,88 @@ function SortableItem({ id, item, onEdit, onDelete, onStatusChange, category }) 
         },
       }}
     >
-      {/* Image container with cute decorative frame */}
+      {/* Drag Handle */}
       <Box
+        {...attributes}
+        {...listeners}
+        onClick={(e) => e.stopPropagation()}
         sx={{
-          width: '100%',
-          height: '200px',
-          borderRadius: '20px',
-          overflow: 'hidden',
-          mb: 2,
-          position: 'relative',
-          background: 'linear-gradient(45deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7))',
-          padding: '8px',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: '4px',
-            left: '4px',
-            right: '4px',
-            bottom: '4px',
-            borderRadius: '16px',
-            background: 'linear-gradient(45deg, rgba(255,182,193,0.3), rgba(255,218,185,0.3), rgba(255,255,224,0.3))',
-            zIndex: 1,
+          position: 'absolute',
+          top: '12px',
+          left: '12px',
+          width: '24px',
+          height: '24px',
+          borderRadius: '50%',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: isDragging ? 'grabbing' : 'grab',
+          zIndex: 5,
+          border: '2px solid rgba(0, 0, 0, 0.1)',
+          '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 1)',
+            transform: 'scale(1.1)',
           },
-          '&::after': {
-            content: '"✨"',
-            position: 'absolute',
-            top: '12px',
-            left: '12px',
-            fontSize: '16px',
-            zIndex: 3,
-            animation: 'sparkle 2s ease-in-out infinite',
-          },
-          '@keyframes sparkle': {
-            '0%, 100%': { opacity: 0.7, transform: 'scale(1)' },
-            '50%': { opacity: 1, transform: 'scale(1.2)' },
-          },
+          transition: 'all 0.2s ease',
         }}
       >
-        {/* Decorative corner elements */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '8px',
-            right: '8px',
-            width: '20px',
-            height: '20px',
-            borderRadius: '50%',
-            background: 'linear-gradient(45deg, #FFB6C1, #FFA07A)',
-            zIndex: 3,
-            '&::before': {
-              content: '"💖"',
-              position: 'absolute',
-              top: '-2px',
-              left: '-2px',
-              fontSize: '12px',
-            },
-          }}
-        />
-        
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: '8px',
-            left: '8px',
-            width: '16px',
-            height: '16px',
-            borderRadius: '50%',
-            background: 'linear-gradient(45deg, #98FB98, #87CEEB)',
-            zIndex: 3,
-            '&::before': {
-              content: '"🌟"',
-              position: 'absolute',
-              top: '-4px',
-              left: '-4px',
-              fontSize: '10px',
-            },
-          }}
-        />
-
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: '8px',
-            right: '8px',
-            width: '18px',
-            height: '18px',
-            borderRadius: '50%',
-            background: 'linear-gradient(45deg, #DDA0DD, #F0E68C)',
-            zIndex: 3,
-            '&::before': {
-              content: '"🎀"',
-              position: 'absolute',
-              top: '-3px',
-              left: '-3px',
-              fontSize: '11px',
-            },
-          }}
-        />
-
-        <img
-          src={item.imageUrl}
-          alt={item.title}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            borderRadius: '12px',
-            position: 'relative',
-            zIndex: 2,
-            border: '2px solid rgba(255, 255, 255, 0.8)',
-          }}
-        />
-        
-        {/* Action buttons overlay */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '16px',
-            right: '16px',
-            display: 'flex',
-            gap: 1,
-            zIndex: 4,
-          }}
-        >
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit(item);
-            }}
-            sx={{
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              border: '2px solid rgba(255, 182, 193, 0.5)',
-              '&:hover': { 
-                backgroundColor: 'rgba(255, 255, 255, 1)',
-                transform: 'scale(1.1)',
-                boxShadow: '0 4px 12px rgba(255, 182, 193, 0.4)',
-              },
-              transition: 'all 0.2s ease',
-            }}
-          >
-            <EditIcon fontSize="small" sx={{ color: '#FF69B4' }} />
-          </IconButton>
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete(item.id);
-            }}
-            sx={{
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              border: '2px solid rgba(255, 99, 71, 0.5)',
-              '&:hover': { 
-                backgroundColor: 'rgba(255, 255, 255, 1)',
-                transform: 'scale(1.1)',
-                boxShadow: '0 4px 12px rgba(255, 99, 71, 0.4)',
-              },
-              transition: 'all 0.2s ease',
-            }}
-          >
-            <DeleteIcon fontSize="small" sx={{ color: '#FF6347' }} />
-          </IconButton>
-        </Box>
+        <Typography sx={{ fontSize: '12px', userSelect: 'none' }}>⋮⋮</Typography>
       </Box>
 
-      {/* Content */}
-      <Box sx={{ textAlign: 'center' }}>
+      {/* Expand/Collapse Indicator */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '12px',
+          right: '12px',
+          width: '24px',
+          height: '24px',
+          borderRadius: '50%',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 5,
+          border: '2px solid rgba(0, 0, 0, 0.1)',
+          transition: 'all 0.2s ease',
+        }}
+      >
+        <Typography sx={{ fontSize: '14px', userSelect: 'none', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>
+          ▼
+        </Typography>
+      </Box>
+
+      {/* Folded View - Always visible */}
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        height: '56px',
+        px: 2,
+      }}>
         <Typography
           variant="h6"
           sx={{
             color: 'white',
             fontWeight: 'bold',
-            mb: 1,
             textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)',
             fontSize: '1rem',
-            lineHeight: 1.2,
+            flex: 1,
+            textAlign: 'left',
+            ml: 2,
           }}
         >
           {item.title}
         </Typography>
         
-        {item.description && (
-          <Typography
-            variant="body2"
-            sx={{
-              color: 'rgba(255, 255, 255, 0.9)',
-              mb: 1,
-              textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)',
-              fontSize: '0.85rem',
-              lineHeight: 1.2,
-            }}
-          >
-            {item.description}
-          </Typography>
-        )}
-
-        {/* Status chip */}
+        {/* Status chip in folded view */}
         <Box
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
         >
-          <FormControl size="small" sx={{ minWidth: 120 }}>
+          <FormControl size="small" sx={{ minWidth: 100 }}>
             <Select
               value={item.status}
               onChange={(e) => {
@@ -352,7 +236,8 @@ function SortableItem({ id, item, onEdit, onDelete, onStatusChange, category }) 
                 backgroundColor: getStatusColor(item.status),
                 color: 'white',
                 fontWeight: 'bold',
-                fontSize: '0.8rem',
+                fontSize: '0.75rem',
+                height: '32px',
                 '& .MuiOutlinedInput-notchedOutline': {
                   border: 'none',
                 },
@@ -372,6 +257,192 @@ function SortableItem({ id, item, onEdit, onDelete, onStatusChange, category }) 
           </FormControl>
         </Box>
       </Box>
+
+      {/* Expanded View - Only visible when expanded */}
+      {isExpanded && (
+        <Box sx={{ mt: 1 }}>
+          {/* Image container with cute decorative frame */}
+          <Box
+            sx={{
+              width: '100%',
+              height: '160px',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              mb: 2,
+              position: 'relative',
+              background: 'linear-gradient(45deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7))',
+              padding: '8px',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '4px',
+                left: '4px',
+                right: '4px',
+                bottom: '4px',
+                borderRadius: '16px',
+                background: 'linear-gradient(45deg, rgba(255,182,193,0.3), rgba(255,218,185,0.3), rgba(255,255,224,0.3))',
+                zIndex: 1,
+              },
+              '&::after': {
+                content: '"✨"',
+                position: 'absolute',
+                top: '12px',
+                left: '12px',
+                fontSize: '16px',
+                zIndex: 3,
+                animation: 'sparkle 2s ease-in-out infinite',
+              },
+              '@keyframes sparkle': {
+                '0%, 100%': { opacity: 0.7, transform: 'scale(1)' },
+                '50%': { opacity: 1, transform: 'scale(1.2)' },
+              },
+            }}
+          >
+            {/* Decorative corner elements */}
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '8px',
+                right: '8px',
+                width: '20px',
+                height: '20px',
+                borderRadius: '50%',
+                background: 'linear-gradient(45deg, #FFB6C1, #FFA07A)',
+                zIndex: 3,
+                '&::before': {
+                  content: '"💖"',
+                  position: 'absolute',
+                  top: '-2px',
+                  left: '-2px',
+                  fontSize: '12px',
+                },
+              }}
+            />
+            
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: '8px',
+                left: '8px',
+                width: '16px',
+                height: '16px',
+                borderRadius: '50%',
+                background: 'linear-gradient(45deg, #98FB98, #87CEEB)',
+                zIndex: 3,
+                '&::before': {
+                  content: '"🌟"',
+                  position: 'absolute',
+                  top: '-4px',
+                  left: '-4px',
+                  fontSize: '10px',
+                },
+              }}
+            />
+
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: '8px',
+                right: '8px',
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                background: 'linear-gradient(45deg, #DDA0DD, #F0E68C)',
+                zIndex: 3,
+                '&::before': {
+                  content: '"🎀"',
+                  position: 'absolute',
+                  top: '-3px',
+                  left: '-3px',
+                  fontSize: '11px',
+                },
+              }}
+            />
+
+            <img
+              src={item.imageUrl}
+              alt={item.title}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '12px',
+                position: 'relative',
+                zIndex: 2,
+                border: '2px solid rgba(255, 255, 255, 0.8)',
+              }}
+            />
+            
+            {/* Action buttons overlay */}
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                display: 'flex',
+                gap: 1,
+                zIndex: 4,
+              }}
+            >
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(item);
+                }}
+                sx={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  border: '2px solid rgba(255, 182, 193, 0.5)',
+                  '&:hover': { 
+                    backgroundColor: 'rgba(255, 255, 255, 1)',
+                    transform: 'scale(1.1)',
+                    boxShadow: '0 4px 12px rgba(255, 182, 193, 0.4)',
+                  },
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <EditIcon fontSize="small" sx={{ color: '#FF69B4' }} />
+              </IconButton>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(item.id);
+                }}
+                sx={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  border: '2px solid rgba(255, 99, 71, 0.5)',
+                  '&:hover': { 
+                    backgroundColor: 'rgba(255, 255, 255, 1)',
+                    transform: 'scale(1.1)',
+                    boxShadow: '0 4px 12px rgba(255, 99, 71, 0.4)',
+                  },
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <DeleteIcon fontSize="small" sx={{ color: '#FF6347' }} />
+              </IconButton>
+            </Box>
+          </Box>
+
+          {/* Description */}
+          {item.description && (
+            <Box sx={{ textAlign: 'center', mb: 1 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)',
+                  fontSize: '0.85rem',
+                  lineHeight: 1.2,
+                }}
+              >
+                {item.description}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      )}
     </Paper>
   );
 }
@@ -440,7 +511,7 @@ function DroppableArea({ id, title, items, children, color }) {
 }
 
 function Packing() {
-  const [items, setItems] = useState([]);
+  const { data: items, loading, error, addDocument, updateDocument, deleteDocument } = usePackingItems();
   const [open, setOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({
@@ -463,26 +534,30 @@ function Packing() {
     })
   );
 
-  // Sample data
+  // Initialize with sample data if collection is empty
   useEffect(() => {
-    const sampleItems = [
-      {
-        id: '1',
-        title: 'Подарки',
-        description: 'Игрушки и сувениры из России',
-        imageUrl: '/images/echo.png', // Using existing image as placeholder
-        status: 'yes',
-      },
-      {
-        id: '2',
-        title: 'Теплая одежда',
-        description: 'Свитера и куртки на случай холодов',
-        imageUrl: '/images/echo.png',
-        status: 'not-sorted',
-      },
-    ];
-    setItems(sampleItems);
-  }, []);
+    if (!loading && items.length === 0) {
+      const sampleItems = [
+        {
+          title: 'Подарки',
+          description: 'Игрушки и сувениры из России',
+          imageUrl: '/images/echo.png',
+          status: 'yes',
+        },
+        {
+          title: 'Теплая одежда',
+          description: 'Свитера и куртки на случай холодов',
+          imageUrl: '/images/echo.png',
+          status: 'not-sorted',
+        },
+      ];
+      
+      // Add sample items to Firebase
+      sampleItems.forEach(item => {
+        addDocument(item).catch(console.error);
+      });
+    }
+  }, [loading, items.length, addDocument]);
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -561,7 +636,7 @@ function Packing() {
     setOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formData.title.trim()) {
       setUploadError('Пожалуйста, введи название предмета');
       return;
@@ -572,33 +647,34 @@ function Packing() {
       return;
     }
 
-    if (editingItem) {
-      setItems(prev => prev.map(item => 
-        item.id === editingItem.id 
-          ? { ...item, ...formData }
-          : item
-      ));
-    } else {
-      const newItem = {
-        id: Date.now().toString(),
-        ...formData,
-      };
-      setItems(prev => [...prev, newItem]);
+    try {
+      if (editingItem) {
+        await updateDocument(editingItem.id, formData);
+      } else {
+        await addDocument(formData);
+      }
+      setOpen(false);
+      setUploadError('');
+    } catch (error) {
+      setUploadError('Ошибка при сохранении: ' + error.message);
     }
-
-    setOpen(false);
   };
 
-  const handleDelete = (id) => {
-    setItems(prev => prev.filter(item => item.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await deleteDocument(id);
+    } catch (error) {
+      console.error('Ошибка при удалении:', error);
+      setUploadError('Ошибка при удалении: ' + error.message);
+    }
   };
 
-  const handleStatusChange = (id, newStatus) => {
-    setItems(prev => prev.map(item => 
-      item.id === id 
-        ? { ...item, status: newStatus }
-        : item
-    ));
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await updateDocument(id, { status: newStatus });
+    } catch (error) {
+      console.error('Ошибка при изменении статуса:', error);
+    }
   };
 
   const handleDragStart = (event) => {
@@ -635,6 +711,30 @@ function Packing() {
   const notSortedItems = items.filter(item => item.status === 'not-sorted');
 
   const activeItem = activeId ? items.find(item => item.id === activeId) : null;
+
+  if (loading) {
+    return (
+      <Box sx={{ maxWidth: 1400, mx: 'auto', textAlign: 'center', mt: 4 }}>
+        <Typography variant="h4" sx={{ mb: 2 }}>
+          Загружаем список вещей... 🧳
+        </Typography>
+        <LinearProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ maxWidth: 1400, mx: 'auto', mt: 4 }}>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          Ошибка загрузки: {error}
+        </Alert>
+        <Typography variant="h6" sx={{ textAlign: 'center' }}>
+          Попробуйте обновить страницу
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <DndContext
