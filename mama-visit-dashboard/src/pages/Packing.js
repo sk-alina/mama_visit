@@ -140,19 +140,104 @@ function SortableItem({ id, item, onEdit, onDelete, onStatusChange, category }) 
         },
       }}
     >
-      {/* Image container */}
+      {/* Image container with cute decorative frame */}
       <Box
         sx={{
           width: '100%',
           height: '200px',
-          borderRadius: '15px',
+          borderRadius: '20px',
           overflow: 'hidden',
-          border: '3px solid rgba(255, 255, 255, 0.9)',
-          boxShadow: 'inset 0 4px 8px rgba(0, 0, 0, 0.1)',
           mb: 2,
           position: 'relative',
+          background: 'linear-gradient(45deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7))',
+          padding: '8px',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: '4px',
+            left: '4px',
+            right: '4px',
+            bottom: '4px',
+            borderRadius: '16px',
+            background: 'linear-gradient(45deg, rgba(255,182,193,0.3), rgba(255,218,185,0.3), rgba(255,255,224,0.3))',
+            zIndex: 1,
+          },
+          '&::after': {
+            content: '"✨"',
+            position: 'absolute',
+            top: '12px',
+            left: '12px',
+            fontSize: '16px',
+            zIndex: 3,
+            animation: 'sparkle 2s ease-in-out infinite',
+          },
+          '@keyframes sparkle': {
+            '0%, 100%': { opacity: 0.7, transform: 'scale(1)' },
+            '50%': { opacity: 1, transform: 'scale(1.2)' },
+          },
         }}
       >
+        {/* Decorative corner elements */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '8px',
+            right: '8px',
+            width: '20px',
+            height: '20px',
+            borderRadius: '50%',
+            background: 'linear-gradient(45deg, #FFB6C1, #FFA07A)',
+            zIndex: 3,
+            '&::before': {
+              content: '"💖"',
+              position: 'absolute',
+              top: '-2px',
+              left: '-2px',
+              fontSize: '12px',
+            },
+          }}
+        />
+        
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: '8px',
+            left: '8px',
+            width: '16px',
+            height: '16px',
+            borderRadius: '50%',
+            background: 'linear-gradient(45deg, #98FB98, #87CEEB)',
+            zIndex: 3,
+            '&::before': {
+              content: '"🌟"',
+              position: 'absolute',
+              top: '-4px',
+              left: '-4px',
+              fontSize: '10px',
+            },
+          }}
+        />
+
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: '8px',
+            right: '8px',
+            width: '18px',
+            height: '18px',
+            borderRadius: '50%',
+            background: 'linear-gradient(45deg, #DDA0DD, #F0E68C)',
+            zIndex: 3,
+            '&::before': {
+              content: '"🎀"',
+              position: 'absolute',
+              top: '-3px',
+              left: '-3px',
+              fontSize: '11px',
+            },
+          }}
+        />
+
         <img
           src={item.imageUrl}
           alt={item.title}
@@ -160,6 +245,10 @@ function SortableItem({ id, item, onEdit, onDelete, onStatusChange, category }) 
             width: '100%',
             height: '100%',
             objectFit: 'cover',
+            borderRadius: '12px',
+            position: 'relative',
+            zIndex: 2,
+            border: '2px solid rgba(255, 255, 255, 0.8)',
           }}
         />
         
@@ -167,10 +256,11 @@ function SortableItem({ id, item, onEdit, onDelete, onStatusChange, category }) 
         <Box
           sx={{
             position: 'absolute',
-            top: 8,
-            right: 8,
+            top: '16px',
+            right: '16px',
             display: 'flex',
             gap: 1,
+            zIndex: 4,
           }}
         >
           <IconButton
@@ -180,11 +270,17 @@ function SortableItem({ id, item, onEdit, onDelete, onStatusChange, category }) 
               onEdit(item);
             }}
             sx={{
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              '&:hover': { backgroundColor: 'rgba(255, 255, 255, 1)' },
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              border: '2px solid rgba(255, 182, 193, 0.5)',
+              '&:hover': { 
+                backgroundColor: 'rgba(255, 255, 255, 1)',
+                transform: 'scale(1.1)',
+                boxShadow: '0 4px 12px rgba(255, 182, 193, 0.4)',
+              },
+              transition: 'all 0.2s ease',
             }}
           >
-            <EditIcon fontSize="small" />
+            <EditIcon fontSize="small" sx={{ color: '#FF69B4' }} />
           </IconButton>
           <IconButton
             size="small"
@@ -193,11 +289,17 @@ function SortableItem({ id, item, onEdit, onDelete, onStatusChange, category }) 
               onDelete(item.id);
             }}
             sx={{
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              '&:hover': { backgroundColor: 'rgba(255, 255, 255, 1)' },
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              border: '2px solid rgba(255, 99, 71, 0.5)',
+              '&:hover': { 
+                backgroundColor: 'rgba(255, 255, 255, 1)',
+                transform: 'scale(1.1)',
+                boxShadow: '0 4px 12px rgba(255, 99, 71, 0.4)',
+              },
+              transition: 'all 0.2s ease',
             }}
           >
-            <DeleteIcon fontSize="small" />
+            <DeleteIcon fontSize="small" sx={{ color: '#FF6347' }} />
           </IconButton>
         </Box>
       </Box>
@@ -234,32 +336,41 @@ function SortableItem({ id, item, onEdit, onDelete, onStatusChange, category }) 
         )}
 
         {/* Status chip */}
-        <FormControl size="small" sx={{ minWidth: 120 }}>
-          <Select
-            value={item.status}
-            onChange={(e) => {
-              e.stopPropagation();
-              onStatusChange(item.id, e.target.value);
-            }}
-            sx={{
-              backgroundColor: getStatusColor(item.status),
-              color: 'white',
-              fontWeight: 'bold',
-              fontSize: '0.8rem',
-              '& .MuiOutlinedInput-notchedOutline': {
-                border: 'none',
-              },
-              '& .MuiSelect-icon': {
+        <Box
+          onPointerDown={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <Select
+              value={item.status}
+              onChange={(e) => {
+                e.stopPropagation();
+                onStatusChange(item.id, e.target.value);
+              }}
+              sx={{
+                backgroundColor: getStatusColor(item.status),
                 color: 'white',
-              },
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <MenuItem value="not-sorted">🤔 Не решила</MenuItem>
-            <MenuItem value="yes">✅ Беру</MenuItem>
-            <MenuItem value="no">❌ Не беру</MenuItem>
-          </Select>
-        </FormControl>
+                fontWeight: 'bold',
+                fontSize: '0.8rem',
+                '& .MuiOutlinedInput-notchedOutline': {
+                  border: 'none',
+                },
+                '& .MuiSelect-icon': {
+                  color: 'white',
+                },
+              }}
+              MenuProps={{
+                disablePortal: false,
+                onClick: (e) => e.stopPropagation(),
+              }}
+            >
+              <MenuItem value="not-sorted">🤔 Не решили</MenuItem>
+              <MenuItem value="yes">✅ Беру</MenuItem>
+              <MenuItem value="no">❌ Не беру</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
       </Box>
     </Paper>
   );
@@ -320,7 +431,7 @@ function DroppableArea({ id, title, items, children, color }) {
           }}
         >
           <Typography variant="h6" sx={{ opacity: isOver ? 0.8 : 0.5 }}>
-            {isOver ? 'Отпустите здесь!' : 'Перетащите сюда предметы'}
+            {isOver ? 'Отпусти здесь!' : 'Перетащи сюда предметы'}
           </Typography>
         </Box>
       )}
@@ -357,7 +468,7 @@ function Packing() {
     const sampleItems = [
       {
         id: '1',
-        title: 'Подарки для внуков',
+        title: 'Подарки',
         description: 'Игрушки и сувениры из России',
         imageUrl: '/images/echo.png', // Using existing image as placeholder
         status: 'yes',
@@ -395,7 +506,7 @@ function Packing() {
     }
 
     if (!imageTypes.includes(file.type)) {
-      setUploadError('Неподдерживаемый формат файла. Используйте JPG, PNG или GIF');
+      setUploadError('Неподдерживаемый формат файла. Используй JPG, PNG или GIF');
       setUploading(false);
       return;
     }
@@ -452,12 +563,12 @@ function Packing() {
 
   const handleSave = () => {
     if (!formData.title.trim()) {
-      setUploadError('Пожалуйста, введите название предмета');
+      setUploadError('Пожалуйста, введи название предмета');
       return;
     }
 
     if (!formData.imageUrl) {
-      setUploadError('Пожалуйста, загрузите фотографию');
+      setUploadError('Пожалуйста, загрузи фотографию');
       return;
     }
 
@@ -535,10 +646,10 @@ function Packing() {
       <Box sx={{ maxWidth: 1400, mx: 'auto', position: 'relative' }}>
         <Box sx={{ mb: 4 }}>
           <Typography variant="h2" sx={{ color: 'primary.main', mb: 1 }}>
-            Что везти в Америку 🧳
+            Что везти 🧳
           </Typography>
           <Typography variant="h6" sx={{ color: 'text.secondary' }}>
-            Планируем, что взять с собой в поездку
+            Планируем, что взять с собой, а что оставить
           </Typography>
         </Box>
 
